@@ -44,8 +44,51 @@ function corrClarteCouleur(valeur,quantite) {
 }
 
 function flou(imageOriginale, taille) {
-    console.log('TODO'); // TODO : Compléter cette fonction
-    return imageOriginale; // Remplacer par la nouvelle image
+    var imageCopie = cloneImg(imageOriginale);
+    for (var i = 0; i < imageCopie.length ; i++) {
+        for (var j = 0; j < imageCopie[0].length ; j++) {
+            var sousImg = sousImage(imageOriginale,i,j,taille);
+            var pixelFlou = ponderation(sousImg,taille);
+            imageCopie[i][j].r = pixelFlou.ponderR;
+            imageCopie[i][j].g = pixelFlou.ponderG;
+            imageCopie[i][j].b = pixelFlou.ponderB;
+        }
+    }
+    return imageCopie;
+}
+
+function sousImage(image,ligne,colonne,N) {
+    var voisinage = Array(N);
+    for (var i = 0; i < N; i++) {
+        voisinage[i] = Array(N);
+        for (var j = 0; j < N; j++) {
+            var indexI = ligne-Math.floor(N/2)+i;
+            var indexJ = colonne-Math.floor(N/2)+j;
+            if (indexI < 0 || indexI > image.length-1
+                || indexJ < 0 || indexJ > image[0].length-1) {
+                voisinage[i][j] = {r: 0, g: 0, b: 0};
+            } else {
+                voisinage[i][j] = image[indexI][indexJ];
+            }
+        }
+    }
+    return voisinage;
+}
+
+function ponderation(soustableau,N) {
+    var ponderR = 0;
+    var ponderG = 0;
+    var ponderB = 0;
+    var coeff = 1/(N*N);
+    for (var i = 0; i < soustableau.length ; i++) {
+        for (var j = 0; j < soustableau[0].length ; j++) {
+            ponderR += soustableau[i][j].r;
+            ponderG += soustableau[i][j].g;
+            ponderB += soustableau[i][j].b;
+        }
+    }
+    return {ponderR: ponderR * coeff, ponderG: ponderG * coeff, ponderB: ponderB * coeff};
+    //return {ponderR: Math.round(ponderR), ponderG: Math.round(ponderG), ponderB: Math.round(ponderB)};
 }
 
 function detectionContours(imageOriginale) {
@@ -86,6 +129,31 @@ function tests() {
         [{r: 41, g: 0, b: 223}, {r: 8, g: 106, b: 43}]];
 
     console.assert(areEqual(correctionClarte(test6Input,1.5),test7Input));
+
+    var tableau = [[{r: 11, g: 11, b: 11}, {r: 12, g: 12, b: 12}, {r: 13, g: 13, b: 13}, {r: 14, g: 14, b: 14}],
+        [{r: 21, g: 21, b: 21}, {r: 22, g: 22, b: 22}, {r: 23, g: 23, b: 23}, {r: 24, g: 24, b: 24}],
+        [{r: 31, g: 31, b: 31}, {r: 32, g: 32, b: 32}, {r: 33, g: 33, b: 33}, {r: 34, g: 34, b: 34}],
+        [{r: 41, g: 41, b: 41}, {r: 42, g: 42, b: 42}, {r: 43, g: 43, b: 43}, {r: 44, g: 44, b: 44}]];
+    var tableauVoisinage = [[{r: 22, g: 22, b: 22}, {r: 23, g: 23, b: 23}, {r: 24, g: 24, b: 24}],
+        [{r: 32, g: 32, b: 32}, {r: 33, g: 33, b: 33}, {r: 34, g: 34, b: 34}],
+        [{r: 42, g: 42, b: 42}, {r: 43, g: 43, b: 43}, {r: 44, g: 44, b: 44}]];
+    var tableauVoisinage2 = [[{r: 0, g: 0, b: 0}, {r: 0, g: 0, b: 0}, {r: 0, g: 0, b: 0}],
+        [ {r: 0, g: 0, b: 0}, {r: 11, g: 11, b: 11}, {r: 12, g: 12, b: 12}],
+        [{r: 0, g: 0, b: 0}, {r: 21, g: 21, b: 21}, {r: 22, g: 22, b: 22}]];
+
+    var tableauVoisinage3 =
+        [[{r: 22, g: 23, b: 24}, {r: 52, g: 53, b: 54}, {r: 82, g: 83, b: 84}],
+            [{r: 32, g: 33, b: 34}, {r: 62, g: 63, b: 64}, {r: 92, g: 93, b: 94}],
+            [{r: 42, g: 43, b: 44}, {r: 72, g: 73, b: 74}, {r: 102, g: 103, b: 104}]];
+    var tableauVoisinage4 =
+        [[{r: 19, g: 19, b: 20}, {r: 38, g: 39, b: 39}, {r: 32, g: 32, b: 33}],
+            [{r: 31, g: 32, b: 33}, {r: 62, g: 63, b: 64}, {r: 51, g: 52, b: 53}],
+            [{r: 23, g: 24, b: 24}, {r: 45, g: 45, b: 46}, {r: 36, g: 37, b: 37}]];
+
+    console.assert(areEqual(sousImage(tableau,2,2,3), tableauVoisinage));
+    console.assert(areEqual(sousImage(tableau,0,0,3), tableauVoisinage2));
+    console.assert(ponderationsEgales(ponderation(tableauVoisinage,3),{ponderR: 33, ponderG: 33, ponderB: 33}));
+    console.assert(areEqual(flou(tableauVoisinage3, 3),tableauVoisinage4));
 }
 
 function areEqual(tab1, tab2) {
@@ -99,10 +167,18 @@ function areEqual(tab1, tab2) {
                     return false;
                 }
             }
-
         }
         return true;
     }
     return false;
+}
+
+function ponderationsEgales(enr1, enr2) {
+    if (enr1.ponderR != enr2.ponderR
+        || enr1.ponderG != enr2.ponderG
+        || enr1.ponderB != enr2.ponderB) {
+        return false;
+    }
+    return true;
 }
 
