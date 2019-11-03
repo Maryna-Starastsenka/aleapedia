@@ -3,6 +3,8 @@
    TODO : Remplacez ce commentaire par un commentaire expliquant
    l'utilité de ce programme
  */
+//fonction du fichier img.js
+//prend un tableau initial et retourne sa copie
 function cloneImg(data) {
     return data.map(function(line) {
         return line.map(function(pix) {
@@ -11,10 +13,13 @@ function cloneImg(data) {
     });
 }
 
+//prend un tableau original est retourne une image en noir et blanc
 function noirEtBlanc(imageOriginale) {
     var imageCopie = cloneImg(imageOriginale);
+
     for (var i = 0; i < imageCopie.length ; i++) {
         for (var j = 0; j < imageCopie[0].length ; j++) {
+            //remplacement de valeur r, g, b de chaque pixel par la luminance
             var lum = luminance(imageCopie[i][j].r, imageCopie[i][j].g, imageCopie[i][j].b);
             imageCopie[i][j].r = lum;
             imageCopie[i][j].g = lum;
@@ -24,31 +29,44 @@ function noirEtBlanc(imageOriginale) {
     return imageCopie;
 }
 
+//prend des valeurs r, g, b de chaque pixel
+//et retourne une moyenne pondérée
 function luminance(r,g,b) {
     return r*0.2126+g*0.7152+b*0.0722;
 }
+
+//prend une image originale et une quantité
+//et retourne une image avec la clarté augmentée/réduite
 function correctionClarte(imageOriginale, quantite) {
     var imageCopie = cloneImg(imageOriginale);
+
     for (var i = 0; i < imageCopie.length ; i++) {
         for (var j = 0; j < imageCopie[0].length ; j++) {
+            //remplacement de valeur de chaque pixel
+            // par la valeure plus ou moins lumineuse
             imageCopie[i][j].r = corrClarteCouleur(imageCopie[i][j].r,quantite);
             imageCopie[i][j].g = corrClarteCouleur(imageCopie[i][j].g,quantite);
             imageCopie[i][j].b = corrClarteCouleur(imageCopie[i][j].b,quantite);
         }
     }
-    return imageCopie; // Remplacer par la nouvelle image
+    return imageCopie;
 }
 
-function corrClarteCouleur(valeur,quantite) {
+//prend des valeurs r, g, b de chaque pixel et une quantité
+//et retourne une nouvelle valeur
+function corrClarteCouleur(valeur, quantite) {
     return Math.pow(valeur/255,quantite)*255;
 }
 
+//prend une valeur du tableau oribinale et une taille du voisinage
+//et retourne une image floue
 function flou(imageOriginale, taille) {
     var imageCopie = cloneImg(imageOriginale);
+
     for (var i = 0; i < imageCopie.length ; i++) {
         for (var j = 0; j < imageCopie[0].length ; j++) {
             var sousImg = sousImage(imageOriginale,i,j,taille);
-            var pixelFlou = ponderation(sousImg,taille);
+            var pixelFlou = ponderationFlou(sousImg,taille);
             imageCopie[i][j].r = pixelFlou.ponderR;
             imageCopie[i][j].g = pixelFlou.ponderG;
             imageCopie[i][j].b = pixelFlou.ponderB;
@@ -57,13 +75,19 @@ function flou(imageOriginale, taille) {
     return imageCopie;
 }
 
+//prend la copie de l'image originale, le noméro de ligne et de colonne,
+//la taille de voisinage et retourne les valeurs du voisinage de taille N
 function sousImage(image,ligne,colonne,N) {
     var voisinage = Array(N);
+
+    //creation d'un tableau avec le nombre N des colonnes
     for (var i = 0; i < N; i++) {
         voisinage[i] = Array(N);
+
         for (var j = 0; j < N; j++) {
             var indexI = ligne-Math.floor(N/2)+i;
             var indexJ = colonne-Math.floor(N/2)+j;
+
             if (indexI < 0 || indexI > image.length-1
                 || indexJ < 0 || indexJ > image[0].length-1) {
                 voisinage[i][j] = {r: 0, g: 0, b: 0};
@@ -75,7 +99,7 @@ function sousImage(image,ligne,colonne,N) {
     return voisinage;
 }
 
-function ponderation(soustableau,N) {
+function ponderationFlou(soustableau,N) {
     var ponderR = 0;
     var ponderG = 0;
     var ponderB = 0;
@@ -92,12 +116,43 @@ function ponderation(soustableau,N) {
 }
 
 function detectionContours(imageOriginale) {
-    console.log('TODO'); // TODO : Compléter cette fonction
-    return imageOriginale; // Remplacer par la nouvelle image
+    var cloneNoirEtBlanc = noirEtBlanc(imageOriginale);
+    var imageCopie = cloneImg(cloneNoirEtBlanc);
+
+    var ponderHoriz = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+
+    var ponderVertic = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+
+    for (var i = 0; i < imageCopie.length; i++) {
+        for (var j = 0; j < imageCopie[0].length; j++) {
+
+            var voisinage = sousImage(cloneNoirEtBlanc, i, j, 3);
+            var intensiteContours = Math.max(Math.abs(ponderation(voisinage,ponderHoriz)),
+                Math.abs(ponderation(voisinage,ponderVertic)));
+
+            if (intensiteContours > 255) {
+                imageCopie[i][j].r = 255;
+                imageCopie[i][j].g = 255;
+                imageCopie[i][j].b = 255;
+            } else {
+                imageCopie[i][j].r = intensiteContours;
+                imageCopie[i][j].g = intensiteContours;
+                imageCopie[i][j].b = intensiteContours;
+            }
+        }
+    }
+    return imageCopie;
 }
 
-// ==> N'hésitez pas à ajouter vos propres fonctions pour vous aider <==
-// function ...
+function ponderation(soustableau,ponder) {
+    var moyennePonderee = 0;
+    for (var i = 0; i < soustableau.length; i++) {
+        for (var j = 0; j < soustableau[0].length; j++) {
+            moyennePonderee += soustableau[i][j].r * ponder[i][j];
+        }
+    }
+    return moyennePonderee;
+}
 
 function tests() {
     var test1Input = [[{r: 0, g: 0, b: 0}, {r: 0, g: 0, b: 0}, {r: 0, g: 0, b: 0}],
@@ -154,6 +209,17 @@ function tests() {
     console.assert(areEqual(sousImage(tableau,0,0,3), tableauVoisinage2));
     console.assert(ponderationsEgales(ponderation(tableauVoisinage,3),{ponderR: 33, ponderG: 33, ponderB: 33}));
     console.assert(areEqual(flou(tableauVoisinage3, 3),tableauVoisinage4));
+
+    var testContoursInput = [
+        [{r:   0, g:  32, b:  29}, {r:   8, g:   5, b:  37}, {r:  16, g:  13, b:  45}, {r:  24, g:  21, b:  53}],
+        [{r:  50, g:  16, b:  48}, {r:  58, g:  24, b:  56}, {r:   0, g:  32, b:  64}, {r:   8, g:  40, b:  72}],
+        [{r:   4, g:   4, b:   4}, {r:  12, g:  12, b: 128}, {r:  20, g:   0, b:   0}, {r:   0, g: 255, b:   0}]];
+    var testContoursOutput = [
+        [{r:  85, g:  85, b:  85}, {r: 120, g: 120, b: 120}, {r: 124, g: 124, b: 124}, {r:  99, g:  99, b:  99}],
+        [{r:  95, g:  95, b:  95}, {r:   8, g:   8, b:   8}, {r: 182, g: 182, b: 182}, {r: 255, g: 255, b: 255}],
+        [{r:  85, g:  85, b:  85}, {r: 120, g: 120, b: 120}, {r: 255, g: 255, b: 255}, {r:  99, g:  99, b:  99}]];
+
+    console.assert(areEqual(detectionContours(testContoursInput),testContoursOutput));
 }
 
 function areEqual(tab1, tab2) {
