@@ -1,5 +1,11 @@
-// Auteurs: Maryna Sirotsina (matricule), PERSONNE 2 (matricule)
+// Auteurs: Maryna Sirotsina (20166402), Ahmed Braik (matricule)
 
+/*
+    Ce fichier englobe les fonctions de manipulation d'images.
+    Il permet de convertir une image en noir et blanc,
+    d'augmenter ou diminuer la carté,
+    de flouter à différentes niveaux, ou de détecter les contours
+*/
 
 //fonction issue du fichier img.js
 //prend une image sous forme de tableau et retourne sa copie
@@ -388,7 +394,4 @@ function tests() {
     console.assert(sontEgaux(detectionContours(tab2), tab2));
     console.assert(sontEgaux(detectionContours(tab3), tab3));
     console.assert(sontEgaux(detectionContours(tab6), tab11));
-
-
-
 }
