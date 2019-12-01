@@ -12,7 +12,6 @@ var writeFile = function (path, texte) {
 
 /* ---- Fonctions outils --- */
 var texteEnMots = function(texte) {
-    //var bloc = texte.split('\n').join(' ').split('.').join('.').split('');
     var phrases = [];
     var bloc = texte.split('\n').forEach(
         (ligne) => {
@@ -21,16 +20,74 @@ var texteEnMots = function(texte) {
             phrases.push(mots);
         }
     );
-    return phrases;
+    var mots = [];
+    phrases.forEach((phrase) => {
+        phrase.forEach((mot) => {
+            mots.push(mot);
+        })
+    });
+    return mots;
 };
 
+var ajouterProchainMot = function(tableauDico, mot) {
+    var idxMatch = -1;
+    tableauDico.forEach((dico, idx) => {
+        if (dico.mot == mot) {
+            idxMatch = idx;
+        }
+    });
+    if (idxMatch == -1) {
+        tableauDico.push({mot: mot, prob: 0, freq: 1});
+    } else {
+        tableauDico[idxMatch].freq += 1;
+    }
+    return tableauDico;
+};
 
+var calculerProb = function(modele, nbMotsSuivants) {
+    modele.prochainsMots.forEach((tableauDico, idx) => {
+        tableauDico.forEach((dico) => {
+            dico.prob = dico.freq / nbMotsSuivants[idx];
+        });
+    });
+};
+
+var supprimerNbOccDuModele = function(modele) {
+    modele.prochainsMots.forEach((tableauDico) => {
+        tableauDico.forEach((dico, idx2) => {
+            tableauDico[idx2] = {mot: dico.mot, prob: dico.prob};
+        });
+    });
+};
 
 /* ----        END       --- */
 
 // TODO : compléter cette fonction
 var creerModele = function(texte) {
-    
+    var mots = texteEnMots(texte);
+
+    var modele = {dictionnaire: [], prochainsMots: []};
+    var nbMotsSuivants = [];
+
+    var tailleMots = mots.length;
+    mots.forEach((mot, idx) => {
+        if (idx < tailleMots - 1) {
+            if (modele.dictionnaire.includes(mot)) {
+                var idxDico = modele.dictionnaire.indexOf(mot);
+
+                modele.prochainsMots[idxDico] = ajouterProchainMot(modele.prochainsMots[idxDico], mots[idx + 1]);
+                nbMotsSuivants[idxDico] += 1;
+            } else {
+                modele.dictionnaire.push(mot);
+
+                modele.prochainsMots.push([{mot: mots[idx + 1], prob: 1.0, freq: 1}]);
+                nbMotsSuivants.push(1);
+            }
+        }
+    });
+
+    calculerProb(modele, nbMotsSuivants);
+    supprimerNbOccDuModele(modele);
 };
 
 
@@ -76,6 +133,7 @@ var tests = function() {
     console.log(texteExemple);
     console.log(computedExemple);
 
+    creerModele(texteExemple);
 };
 
 
