@@ -88,22 +88,71 @@ var creerModele = function(texte) {
 
     calculerProb(modele, nbMotsSuivants);
     supprimerNbOccDuModele(modele);
+    return modele;
 };
 
 
 // TODO : compléter cette fonction
 var genererProchainMot = function(modele, motActuel) {
-
+    var rand = Math.random();
+    var idx = modele.dictionnaire.indexOf(motActuel);
+    var tableauDico = modele.prochainsMots[idx];
+    var somme = 0;
+    var idxMotSuivant = -1;
+    do {
+        idxMotSuivant++;
+        somme += tableauDico[idxMotSuivant].prob;
+    } while (rand > somme);
+    return tableauDico[idxMotSuivant].mot
 };
 
 // TODO : compléter cette fonction
 var genererPhrase = function(modele, maxNbMots) {
-    
+    var nbMots = 0;
+    var motCourant = '';
+    var phrase = '';
+    while (nbMots < maxNbMots && !motCourant.includes('.')) {
+        motCourant = genererProchainMot(modele, motCourant);
+        if (nbMots == 0) {
+            phrase += motCourant;
+        } else {
+            phrase += ' ' + motCourant;
+        }
+        nbMots++;
+    }
+
+    if (!motCourant.includes('.')) {
+        phrase += '.';
+    }
+    return phrase;
 };
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
 
 // TODO : compléter cette fonction
 var genererParagraphes = function(modele, nbParagraphes, maxNbPhrases, maxNbMots) {
-    
+    var nbParagraphesCourant = 0;
+    var paragraphes = [];
+    while (nbParagraphesCourant < nbParagraphes) {
+        var nbPhrases = 0;
+        var phrases = '';
+        var phraseCourante = '';
+        var randomMaxNbPhrases = getRandomInt(maxNbPhrases) + 1;
+        while (nbPhrases < randomMaxNbPhrases) {
+            phraseCourante = genererPhrase(modele, maxNbMots);
+            if (nbPhrases == 0) {
+                phrases += phraseCourante;
+            } else {
+                phrases += ' ' + phraseCourante;
+            }
+            nbPhrases++;
+        }
+        paragraphes.push(phrases);
+        nbParagraphesCourant++;
+    }
+    return paragraphes;
 };
 
 
@@ -133,7 +182,16 @@ var tests = function() {
     console.log(texteExemple);
     console.log(computedExemple);
 
-    creerModele(texteExemple);
+     var modele = creerModele(texteExemple);
+    // var dico = {"Je":0, "En":0, "Ma":0};
+    // for (let i = 0; i < 1000000; i++) {
+    //     var a = genererProchainMot(modele, "");
+    //     dico[a] +=1;
+    // }
+
+    //var a = genererPhrase(modele, 20);
+    var paragraphes = genererParagraphes(modele, 4, 6, 10);
+    console.log(paragraphes);
 };
 
 
