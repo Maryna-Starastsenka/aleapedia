@@ -291,22 +291,96 @@ var sendPage = function (reponse, page) {
 // -------------------------------------
 
 // TODO : compléter cette fonction
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
 var substituerEtiquette = function (texte, etiquette, valeur) {
-    
+    while (texte.indexOf(etiquette) !== -1) {
+        if (etiquette.substring(0, 3) === '{{{' && etiquette.substring(etiquette.length - 3) === '}}}') {
+            texte =  texte.substring(0, texte.indexOf(etiquette)) + valeur + texte.substring(texte.indexOf(etiquette) + etiquette.length);
+        } else if (etiquette.substring(0, 2) === '{{' && etiquette.substring(etiquette.length - 2) === '}}') {
+            texte =  texte.substring(0, texte.indexOf(etiquette)) + escapeHtml(valeur) + texte.substring(texte.indexOf(etiquette) + etiquette.length);
+        } else {
+            // A FINIR ------------------------------------------------------******* //
+            return texte;
+        }
+    }
+    return texte;
 };
 
 // TODO : compléter cette fonction
 var getIndex = function () {
-    return 'TODO : completer getIndex()';
+    const n = 20;
+
+    const imageSrc = getImage('random');
+    const articles = getRandomPageTitles(n);
+
+    let page = readFile('template/index.html');
+    
+    page = substituerEtiquette(page, '{{img}}', imageSrc);
+    var articleHtml = '';
+
+    for (let i = 0; i < n; i++) {
+        articleHtml += '<li><a href="/article/' + articles[i] + '">' + articles[i] + '</a></li>\n';
+    }
+
+    page = substituerEtiquette(page, '{{{articles-recents}}}', articleHtml);
+
+    return page;
 };
 
 // TODO
 var getArticle = function(titre) {
-    return 'TODO : completer getArticle()';
+    const imageSrc = getImage(titre);
+    let premierePhrase = premieresPhrases[Math.floor(Math.random() * premieresPhrases.length)];
+
+    premierePhrase = substituerEtiquette(premierePhrase, '{{titre}}', titre);
+    premierePhrase = substituerEtiquette(premierePhrase, '{{titre-1}}', titre.substring(0, titre.length / 2));
+    premierePhrase = substituerEtiquette(premierePhrase, '{{titre-2}}', titre.substring(titre.length / 2));
+
+    let modele = creerModele(readFile('corpus/wikipedia'));
+
+    let contenu = [
+        premierePhrase,
+        ...genererParagraphes(modele, 
+            4 + Math.floor(Math.random() * 3),
+            6 + Math.floor(Math.random() * 5),
+            30 + Math.floor(Math.random() * 10))
+    ];
+
+    contenu = contenu.map(paragraphe => {
+        return '<p>' + paragraphe.split(' ').map(mot => {
+            if (mot.length >=  7) {
+                const prob = Math.random();
+                
+                if (prob <= 0.15) 
+                    return '<strong>' + mot + '</strong>';
+                else if (prob <= 0.30) 
+                    return '<em>' + mot + '</em>';
+                else if (prob <= 0.45) 
+                    return '<a href="/article/' + mot + '">' + mot + '</a>';
+                else return mot;
+            }
+            return mot;
+        }).join(' ') + '</p>';
+    });
+
+    let page = readFile('template/article.html');
+
+    page = substituerEtiquette(page, '{{titre}}', titre);
+    page = substituerEtiquette(page, '{{img}}', imageSrc);
+    page = substituerEtiquette(page, '{{{contenu}}}', contenu);
+
+    return page;
 };
 
-
-
+//console.log(getArticle('Terry Holbrook'));
 
 /*
  * Création du serveur HTTP
