@@ -290,7 +290,7 @@ var sendPage = function (reponse, page) {
 //       MODIFIER EST CI-DESSOUS
 // -------------------------------------
 
-// TODO : compléter cette fonction
+// fonction outil qui sert à remplacer quelques caractere speciaux 
 function escapeHtml(unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
@@ -307,54 +307,55 @@ var substituerEtiquette = function (texte, etiquette, valeur) {
         } else if (etiquette.substring(0, 2) === '{{' && etiquette.substring(etiquette.length - 2) === '}}') {
             texte =  texte.substring(0, texte.indexOf(etiquette)) + escapeHtml(valeur) + texte.substring(texte.indexOf(etiquette) + etiquette.length);
         } else {
-            // A FINIR ------------------------------------------------------******* //
-            return texte;
+            return texte; // la fonction retourne le meme texte 
+                          // s'il y a une erreur d'etiquette 
         }
     }
     return texte;
 };
 
-// TODO : compléter cette fonction
 var getIndex = function () {
     const n = 20;
 
     const imageSrc = getImage('random');
     const articles = getRandomPageTitles(n);
-
+    //recuperer le contenu du fichier index.html
     let page = readFile('template/index.html');
-    
+    //remplacer l'etiquette dans le contenu 
     page = substituerEtiquette(page, '{{img}}', imageSrc);
     var articleHtml = '';
 
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) { // création d'une liste des liens recuperés 
         articleHtml += '<li><a href="/article/' + articles[i] + '">' + articles[i] + '</a></li>\n';
     }
-
+    // remplacer l'etiquette par la liste 
     page = substituerEtiquette(page, '{{{articles-recents}}}', articleHtml);
 
     return page;
 };
 
-// TODO
+
 var getArticle = function(titre) {
     const imageSrc = getImage(titre);
+    //recuperer une phrase au hasard 
     let premierePhrase = premieresPhrases[Math.floor(Math.random() * premieresPhrases.length)];
-
+    // remplacer les etiquettes de la premiere phrase par les titres souhaités
     premierePhrase = substituerEtiquette(premierePhrase, '{{titre}}', titre);
     premierePhrase = substituerEtiquette(premierePhrase, '{{titre-1}}', titre.substring(0, titre.length / 2));
     premierePhrase = substituerEtiquette(premierePhrase, '{{titre-2}}', titre.substring(titre.length / 2));
 
     let modele = creerModele(readFile('corpus/wikipedia'));
 
-    let contenu = [
+    let contenu = [ // generer un article 
         premierePhrase,
-        ...genererParagraphes(modele, 
-            4 + Math.floor(Math.random() * 3),
-            6 + Math.floor(Math.random() * 5),
-            30 + Math.floor(Math.random() * 10))
+        ...genererParagraphes(modele, // la fonction retourne un tableau qui sera transformé directement en éléments du tableau contenu 
+            4 + Math.floor(Math.random() * 3), // nombre de paragraghes entre 4 et 7 
+            6 + Math.floor(Math.random() * 5), // chaque paragraphe contient entre 6 et 11 phrases 
+            30 + Math.floor(Math.random() * 10))// une phrase est composée de 30 jusqu'aux 40 mots 
     ];
 
     contenu = contenu.map(paragraphe => {
+        // restructurer l'article à l'aide des tags <p>,<strong>,<em> et <a>.
         return '<p>' + paragraphe.split(' ').map(mot => {
             if (mot.length >=  7) {
                 const prob = Math.random();
@@ -380,7 +381,40 @@ var getArticle = function(titre) {
     return page;
 };
 
-//console.log(getArticle('Terry Holbrook'));
+var test = function () {
+    if (substituerEtiquette('université de {{{toronto}}} est située à {{{toronto}}}', '{{{toronto}}}', 
+        'montréal') !== 'université de montréal est située à montréal'){
+            console.log('Erreur substituerEtiquette');
+        }
+    
+    if (substituerEtiquette('université de {{{toronto}}}', '{{{montreal}}}', 
+        'montréal') !== 'université de {{{toronto}}}'){
+            console.log('Erreur substituerEtiquette');
+        }
+    
+    if (substituerEtiquette('université de {{toronto}} est située à {{toronto}}', '{{toronto}}', 
+        'montréal') !== 'université de montréal est située à montréal'){
+            console.log('Erreur substituerEtiquette');
+        }
+    
+    if (substituerEtiquette('université de {{toronto}}', '{{montreal}}', 
+        'montréal') !== 'université de {{toronto}}'){
+            console.log('Erreur substituerEtiquette');
+        }
+        
+    if (substituerEtiquette('une inégalité de type {{eq}} est fausse', '{{eq}}', 
+        '8 < 5') !== 'une inégalité de type 8 &lt; 5 est fausse'){
+            console.log('Erreur substituerEtiquette');
+        }
+    
+    if (substituerEtiquette('université de {toronto}', '{toronto}', 
+        'montréal') !== 'université de {toronto}'){
+            console.log('Erreur substituerEtiquette');
+        }
+    
+    
+    }
+test(); 
 
 /*
  * Création du serveur HTTP
