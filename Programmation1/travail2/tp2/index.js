@@ -350,12 +350,12 @@ var getArticle = function(titre) {
         premierePhrase,
         ...genererParagraphes(modele, // la fonction retourne un tableau qui sera transformé directement en éléments du tableau contenu 
             4 + Math.floor(Math.random() * 3), // nombre de paragraghes entre 4 et 7 
-            6 + Math.floor(Math.random() * 5), // chaque paragraphe contient entre 6 et 11 phrases 
-            30 + Math.floor(Math.random() * 10))// une phrase est composée de 30 jusqu'aux 40 mots 
+            11, // chaque paragraphe contient entre 1 et 11 phrases 
+            40) // une phrase est composée de maximum 40 mots 
     ];
 
     contenu = contenu.map(paragraphe => {
-        // restructurer l'article à l'aide des tags <p>,<strong>,<em> et <a>.
+        // restructurer l'article à l'aide des tags <p>, <strong>, <em> et <a>.
         return '<p>' + paragraphe.split(' ').map(mot => {
             if (mot.length >=  7) {
                 const prob = Math.random();
@@ -370,7 +370,7 @@ var getArticle = function(titre) {
             }
             return mot;
         }).join(' ') + '</p>';
-    });
+    }).join('');
 
     let page = readFile('template/article.html');
 
