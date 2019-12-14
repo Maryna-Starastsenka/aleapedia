@@ -15,6 +15,13 @@ var writeFile = function (path, texte) {
 // ---------------------------------------------------------
 //  Fonctions outils
 // ---------------------------------------------------------
+/*
+ * Prend en param 2 tableaux et retourne s'ils
+ * sont égaux
+ */
+var tableauxSontEgaux = function(tab1, tab2) {
+    return JSON.stringify(tab1) == JSON.stringify(tab2);
+};
 
 /*
  * Prend un nombre max en param et
@@ -434,10 +441,6 @@ var tests = function() {
     // ---------------------------------------------------------
     paragraphesExemple = genererParagraphes(modeleExemple, 3, 5, 10);
     console.assert(paragraphesExemple.length == 3);
-};
-
-var tableauxSontEgaux = function(tab1, tab2) {
-    return JSON.stringify(tab1) == JSON.stringify(tab2);
 };
 
 if (require.main === module) {
