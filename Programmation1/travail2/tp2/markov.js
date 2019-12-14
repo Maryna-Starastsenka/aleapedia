@@ -288,18 +288,6 @@ var tests = function() {
     ];
     console.assert(tableauxSontEgaux(expectedExemple, computedExemple));
 
-
-    //var modele = creerModele(texteExemple);
-    // var dico = {"Je":0, "En":0, "Ma":0};
-    // for (let i = 0; i < 1000000; i++) {
-    //     var a = genererProchainMot(modele, "");
-    //     dico[a] +=1;
-    // }
-
-    //var a = genererPhrase(modele, 20);
-    //var paragraphes = genererParagraphes(modele, 4, 6, 10);
-    //console.log(paragraphes);
-
     // ---------------------------------------------------------
     //  ajouterProchainMot
     // ---------------------------------------------------------
@@ -313,14 +301,84 @@ var tests = function() {
     // ---------------------------------------------------------
     //  calculerProb
     // ---------------------------------------------------------
+    var modeleSimplifie = {
+        prochainsMots: [
+            [{mot: "Je", prob: 1.0, freq: 4}, {mot: "m'appelle", prob: 1.0, freq: 1}],
+            [{mot: "ainsi", prob: 1.0, freq: 1}, {mot: "Je", prob: 1.0, freq: 2}, {mot: "crois", prob: 1.0, freq: 1}]
+        ]
+    };
+    var modeleSimplifieExpected = {
+        prochainsMots: [
+            [{mot: "Je", prob: 0.8, freq: 4}, {mot: "m'appelle", prob: 0.2, freq: 1}],
+            [{mot: "ainsi", prob: 0.25, freq: 1}, {mot: "Je", prob: 0.5, freq: 2}, {mot: "crois", prob: 0.25, freq: 1}]
+        ]
+    };
+    var nbMotsSuivants = [5, 4];
+    calculerProb(modeleSimplifie, nbMotsSuivants);
+    console.assert(tableauxSontEgaux(modeleSimplifieExpected, modeleSimplifie));
 
     // ---------------------------------------------------------
     //  supprimerNbOccDuModele
     // ---------------------------------------------------------
+    var modeleSimplifie2Expected = {
+        prochainsMots: [
+            [{mot: "Je", prob: 0.8}, {mot: "m'appelle", prob: 0.2}],
+            [{mot: "ainsi", prob: 0.25}, {mot: "Je", prob: 0.5}, {mot: "crois", prob: 0.25}]
+        ]
+    };
+    supprimerNbOccDuModele(modeleSimplifie);
+    console.assert(tableauxSontEgaux(modeleSimplifie2Expected, modeleSimplifie));
 
     // ---------------------------------------------------------
     //  creerModele
     // ---------------------------------------------------------
+    var modeleTrivial = creerModele(texteTrivial);
+    var modeleTrivialExpected = {
+        dictionnaire:["","A","B","C.","A.","C"],
+        prochainsMots:
+            [
+                [{"mot":"A", "prob":0.6666666666666666},
+                    {"mot":"C", "prob":0.3333333333333333}],
+                [{"mot":"B", "prob":1}],
+                [{"mot":"C.", "prob":0.3333333333333333},
+                    {"mot":"A.", "prob":0.6666666666666666}],
+                [{"mot":"", "prob":1}],
+                [{"mot":"", "prob":1}],
+                [{"mot":"B", "prob":1}]
+            ]};
+    console.assert(tableauxSontEgaux(modeleTrivialExpected, modeleTrivial));
+
+    var modeleExemple = creerModele(texteExemple);
+    var modeleExempleExpected = {
+        dictionnaire:[
+            "","Je","m'appelle","Marguerite","Lafontaine.",
+                "ainsi","parce","que","la","est","fleur","préférée",
+                "de","ma","mère.","En","général,","on","car","tel",
+                "mon","nom.","Ma","mère"],
+        prochainsMots:[
+            [{"mot":"Je","prob":0.5},{"mot":"En","prob":0.25},{"mot":"Ma","prob":0.25}],
+            [{"mot":"m'appelle","prob":1}],
+            [{"mot":"Marguerite","prob":0.5},{"mot":"ainsi","prob":0.25},
+                {"mot":"\"Petit-Chou\".","prob":0.25}],
+            [{"mot":"Lafontaine.","prob":0.3333333333333333},
+                {"mot":"est","prob":0.3333333333333333},
+                {"mot":"car","prob":0.3333333333333333}],
+            [{"mot":"","prob":1}],[{"mot":"parce","prob":1}],
+            [{"mot":"que","prob":1}],[{"mot":"la","prob":1}],
+            [{"mot":"Marguerite","prob":0.5},{"mot":"fleur","prob":0.5}],
+            [{"mot":"la","prob":0.5},{"mot":"mon","prob":0.5}],
+            [{"mot":"préférée","prob":1}],[{"mot":"de","prob":1}],
+            [{"mot":"ma","prob":1}],
+            [{"mot":"mère.","prob":1}],[{"mot":"","prob":1}],
+            [{"mot":"général,","prob":1}],[{"mot":"on","prob":1}],
+            [{"mot":"m'appelle","prob":1}],[{"mot":"tel","prob":1}],
+            [{"mot":"est","prob":1}],[{"mot":"nom.","prob":1}],[{"mot":"","prob":1}],
+            [{"mot":"mère","prob":1}],[{"mot":"m'appelle","prob":1}]
+        ]
+    };
+    console.assert(tableauxSontEgaux(modeleExempleExpected, modeleExemple));
+
+
 
     // ---------------------------------------------------------
     //  genererProchainMot
@@ -335,6 +393,10 @@ var tests = function() {
     // ---------------------------------------------------------
 
 
+
+    //var a = genererPhrase(modele, 20);
+    //var paragraphes = genererParagraphes(modele, 4, 6, 10);
+    //console.log(paragraphes);
 
 
 
