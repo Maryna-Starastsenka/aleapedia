@@ -10,89 +10,144 @@ var writeFile = function (path, texte) {
 };
 
 
-/* ---- Fonctions outils --- */
+// ---------------------------------------------------------
+//  Fonctions outils
+// ---------------------------------------------------------
+
+/*
+ * Prend un nombre max en param et
+ * retourne un nombre entier aléatoire entre [0, max[
+ */
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+/*
+ * Prend du texte (string) en param
+ * et retourne un tableau de mots (sans espaces et '\n')
+ */
 var texteEnMots = function(texte) {
     var phrases = [];
-    var bloc = texte.split('\n').forEach(
-        (ligne) => {
+    // pour chaque ligne
+    texte.split('\n').forEach(
+        ligne => {
             var mots = ligne.split(' ');
+            // on commence une phrase par ''
             mots.unshift('');
+            // on construit un tableau de phrases
             phrases.push(mots);
         }
     );
     var mots = [];
-    phrases.forEach((phrase) => {
-        phrase.forEach((mot) => {
-            mots.push(mot);
-        })
+    // pour chaque phrase
+    phrases.forEach(
+        phrase => {
+            phrase.forEach(
+                mot => {
+                    // on construit un tableau de mots
+                    mots.push(mot);
+            })
     });
     return mots;
 };
 
-var ajouterProchainMot = function(tableauDico, mot) {
+/*
+ * Prend un tableau de dictionnaires et le mot suivant courant
+ * en param et retourne le tableau de dictionnaires mis à jour
+ */
+var ajouterProchainMot = function(prochainsMots, motSuivant) {
     var idxMatch = -1;
-    tableauDico.forEach((dico, idx) => {
-        if (dico.mot == mot) {
+    prochainsMots.forEach((dico, idx) => {
+        if (dico.mot == motSuivant) {
             idxMatch = idx;
         }
     });
+    // si le motSuivant suivant n'a jamais été vu
+    // on l'ajoute. La proba sera calculée plus tard
     if (idxMatch == -1) {
-        tableauDico.push({mot: mot, prob: 0, freq: 1});
+        prochainsMots.push({mot: motSuivant, prob: 0, freq: 1});
     } else {
-        tableauDico[idxMatch].freq += 1;
+        // si le motSuivant suivant existe déjà, on incrémente
+        // le nombre d'occurences
+        prochainsMots[idxMatch].freq += 1;
     }
-    return tableauDico;
+    return prochainsMots;
 };
 
+/*
+ * Prend un modele et un tableau des nombres de mots suivants
+ * ordonnés pour chaque mot du texte
+ * et calcule les probabilités d'occurence de chaque mot suivant
+ */
 var calculerProb = function(modele, nbMotsSuivants) {
-    modele.prochainsMots.forEach((tableauDico, idx) => {
-        tableauDico.forEach((dico) => {
+    modele.prochainsMots.forEach((tableauDico, idx) =>
+        tableauDico.forEach(dico => {
             dico.prob = dico.freq / nbMotsSuivants[idx];
-        });
-    });
+        }));
 };
 
+/*
+ * Prend un modele en param
+ * et supprime l'élément fréq de chaque dictionnaire
+ * de mots suivants
+ */
 var supprimerNbOccDuModele = function(modele) {
     modele.prochainsMots.forEach((tableauDico) => {
-        tableauDico.forEach((dico, idx2) => {
-            tableauDico[idx2] = {mot: dico.mot, prob: dico.prob};
+        tableauDico.forEach((dico, idx) => {
+            tableauDico[idx] = {mot: dico.mot, prob: dico.prob};
         });
     });
 };
 
-/* ----        END       --- */
+// ---------------------------------------------------------
+//  Fonctions de
+// ---------------------------------------------------------
 
-// TODO : compléter cette fonction
+/*
+ * Prend un texte (string) en param et
+ * retourne un modèle de génération probabiliste de texte
+ */
 var creerModele = function(texte) {
+    // pour retrouver l'indice d'un mot déjà
+    // visité, on créé un dictionnaire de cache qui
+    // permet un accès plus rapide qu'avec un tableau
+    var dicoCache = {};
     var mots = texteEnMots(texte);
-
     var modele = {dictionnaire: [], prochainsMots: []};
-    var nbMotsSuivants = [];
+    var nbMotsSuivants = []; // pour calculer les probabilités
 
     var tailleMots = mots.length;
     mots.forEach((mot, idx) => {
         if (idx < tailleMots - 1) {
-            if (modele.dictionnaire.includes(mot)) {
-                var idxDico = modele.dictionnaire.indexOf(mot);
-
-                modele.prochainsMots[idxDico] = ajouterProchainMot(modele.prochainsMots[idxDico], mots[idx + 1]);
-                nbMotsSuivants[idxDico] += 1;
+            if (mot in dicoCache) { // plus rapide que indexOf sur un tableau
+                var idxCache = dicoCache[mot];
+                // on ajoute le mot suivant observé ou on incrémente sa fréq
+                modele.prochainsMots[idxCache] = ajouterProchainMot(
+                    modele.prochainsMots[idxCache], mots[idx + 1]);
+                // on garde en mémoire le nombre de mots suivants
+                // que présente le mot courant
+                nbMotsSuivants[idxCache] += 1;
             } else {
-                modele.dictionnaire.push(mot);
-
+                modele.dictionnaire.push(mot); // on ajoute le mot jamais vu
+                dicoCache[mot] = modele.dictionnaire.length - 1; // et on retient son indice
+                // le mot est nouveau donc il n'y a pas encore de mot suivant pour ce mot
                 modele.prochainsMots.push([{mot: mots[idx + 1], prob: 1.0, freq: 1}]);
                 nbMotsSuivants.push(1);
             }
         }
     });
 
+    // on calcule les proba pour chaque mot suivant
     calculerProb(modele, nbMotsSuivants);
+    // et on supprime les fréquences du modèle
     supprimerNbOccDuModele(modele);
     return modele;
 };
 
 
-// TODO : compléter cette fonction
+/*
+ * Prend
+ */
 var genererProchainMot = function(modele, motActuel) {
     var rand = Math.random();
     var idx = modele.dictionnaire.indexOf(motActuel);
@@ -106,7 +161,9 @@ var genererProchainMot = function(modele, motActuel) {
     return tableauDico[idxMotSuivant].mot
 };
 
-// TODO : compléter cette fonction
+/*
+ * Prend
+ */
 var genererPhrase = function(modele, maxNbMots) {
     var nbMots = 0;
     var motCourant = '';
@@ -127,11 +184,9 @@ var genererPhrase = function(modele, maxNbMots) {
     return phrase;
 };
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
-
-// TODO : compléter cette fonction
+/*
+ * Prend
+ */
 var genererParagraphes = function(modele, nbParagraphes, maxNbPhrases, maxNbMots) {
     var nbParagraphesCourant = 0;
     var paragraphes = [];
@@ -155,21 +210,15 @@ var genererParagraphes = function(modele, nbParagraphes, maxNbPhrases, maxNbMots
     return paragraphes;
 };
 
-
-
+// ---------------------------------------------------------
+//  Tests
+// ---------------------------------------------------------
 
 var tests = function() {
-    // TODO : Écrivez des tests ici
-
     /* Les tests seront lancés automatiquement si vous appelez ce
-    fichier avec :
-
-       node markov.js
-
-     */
+    fichier avec : node markov.js */
 
     // Utilisez console.assert(a == b); pour faire des tests unitaires
-    console.log('TODO : exécuter des tests');
 
     // texteEnMots
     var texteTrivial = readFile('corpus/trivial');
@@ -193,8 +242,6 @@ var tests = function() {
     var paragraphes = genererParagraphes(modele, 4, 6, 10);
     console.log(paragraphes);
 };
-
-
 
 if (require.main === module) {
     // Si on se trouve ici, alors le fichier est exécuté via : nodejs gen.js
