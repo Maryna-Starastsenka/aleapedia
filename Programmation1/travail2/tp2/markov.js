@@ -9,7 +9,6 @@ var writeFile = function (path, texte) {
     fs.writeFileSync(path, texte);
 };
 
-
 // ---------------------------------------------------------
 //  Fonctions outils
 // ---------------------------------------------------------
@@ -48,6 +47,7 @@ var texteEnMots = function(texte) {
                     mots.push(mot);
             })
     });
+
     return mots;
 };
 
@@ -71,6 +71,7 @@ var ajouterProchainMot = function(prochainsMots, motSuivant) {
         // le nombre d'occurences
         prochainsMots[idxMatch].freq += 1;
     }
+
     return prochainsMots;
 };
 
@@ -141,33 +142,39 @@ var creerModele = function(texte) {
     calculerProb(modele, nbMotsSuivants);
     // et on supprime les fréquences du modèle
     supprimerNbOccDuModele(modele);
+
     return modele;
 };
 
 
 /*
- * Prend
+ * Prend un modele probabiliste et un mot en param
+ * et retourne le mot suivant aléatoire
  */
 var genererProchainMot = function(modele, motActuel) {
-    var rand = Math.random();
     var idx = modele.dictionnaire.indexOf(motActuel);
-    var tableauDico = modele.prochainsMots[idx];
-    var somme = 0;
     var idxMotSuivant = -1;
+    var somme = 0;
+    var motsSuivants = modele.prochainsMots[idx];
+    var rand = Math.random(); // nb aléatoire entre [0,1[
+    // sélection du mot suivant basé sur les probabilités
     do {
         idxMotSuivant++;
-        somme += tableauDico[idxMotSuivant].prob;
+        somme += motsSuivants[idxMotSuivant].prob;
     } while (rand > somme);
-    return tableauDico[idxMotSuivant].mot
+
+    return motsSuivants[idxMotSuivant].mot
 };
 
 /*
- * Prend
+ * Prend un modèle et un nb de mots max en param
+ * et retourne une phrase autogénérée avec au plus
+ * maxNbMots mots
  */
 var genererPhrase = function(modele, maxNbMots) {
-    var nbMots = 0;
-    var motCourant = '';
-    var phrase = '';
+    var nbMots = 0; // compteur des mots de la phrase
+    var motCourant = ''; // le premier mot est vide
+    var phrase = ''; // output
     while (nbMots < maxNbMots && !motCourant.includes('.')) {
         motCourant = genererProchainMot(modele, motCourant);
         if (nbMots == 0) {
@@ -177,24 +184,32 @@ var genererPhrase = function(modele, maxNbMots) {
         }
         nbMots++;
     }
-
+    // on doit terminer la phrase par un point
     if (!motCourant.includes('.')) {
         phrase += '.';
     }
+
     return phrase;
 };
 
 /*
- * Prend
+ * Prend en param un modèle, un nombre exact de paragraphes,
+ * un nombre max de phrases par paragraphe et un nombre
+ * max de mots par phrase
+ * et retourne un tableau de paragraphes avec entre 1 et maxNbPhrases
+ * par paragraphe.
  */
 var genererParagraphes = function(modele, nbParagraphes, maxNbPhrases, maxNbMots) {
     var nbParagraphesCourant = 0;
     var paragraphes = [];
+
     while (nbParagraphesCourant < nbParagraphes) {
         var nbPhrases = 0;
         var phrases = '';
         var phraseCourante = '';
+        // entre 1 et maxNbPhrases phrases
         var randomMaxNbPhrases = getRandomInt(maxNbPhrases) + 1;
+
         while (nbPhrases < randomMaxNbPhrases) {
             phraseCourante = genererPhrase(modele, maxNbMots);
             if (nbPhrases == 0) {
@@ -204,9 +219,11 @@ var genererParagraphes = function(modele, nbParagraphes, maxNbPhrases, maxNbMots
             }
             nbPhrases++;
         }
+
         paragraphes.push(phrases);
         nbParagraphesCourant++;
     }
+
     return paragraphes;
 };
 
@@ -218,20 +235,61 @@ var tests = function() {
     /* Les tests seront lancés automatiquement si vous appelez ce
     fichier avec : node markov.js */
 
-    // Utilisez console.assert(a == b); pour faire des tests unitaires
+    // ---------------------------------------------------------
+    //  tableauxSontEgaux
+    // ---------------------------------------------------------
+    var tab1 = [
+        '', 'A', 'B', 'C.',
+        '', 'A', 'B', 'A.',
+        '', 'C', 'B', 'A.'
+    ];
 
-    // texteEnMots
+    var tab2egal1 = [
+        '', 'A', 'B', 'C.',
+        '', 'A', 'B', 'A.',
+        '', 'C', 'B', 'A.'
+    ];
+
+    var tab3diff1 = [
+        '', 'A', 'B', 'C.',
+    ];
+
+    console.assert(tableauxSontEgaux(tab1, tab2egal1));
+    console.assert(!tableauxSontEgaux(tab1, tab3diff1));
+
+    // ---------------------------------------------------------
+    //  texteEnMots
+    // ---------------------------------------------------------
     var texteTrivial = readFile('corpus/trivial');
     var computedTrivial = texteEnMots(texteTrivial);
-    console.log(texteTrivial);
-    console.log(computedTrivial);
+    var expectedTrivial = [
+        '', 'A', 'B', 'C.',
+        '', 'A', 'B', 'A.',
+        '', 'C', 'B', 'A.'
+    ];
+
+    console.assert(tableauxSontEgaux(expectedTrivial, computedTrivial));
 
     var texteExemple = readFile('corpus/exemple');
     var computedExemple = texteEnMots(texteExemple);
-    console.log(texteExemple);
-    console.log(computedExemple);
+    var expectedExemple = [
+        '',           'Je',          "m'appelle",
+        'Marguerite', 'Lafontaine.', '',
+        'Je',         "m'appelle",   'ainsi',
+        'parce',      'que',         'la',
+        'Marguerite', 'est',         'la',
+        'fleur',      'préférée',    'de',
+        'ma',         'mère.',       '',
+        'En',         'général,',    'on',
+        "m'appelle",  'Marguerite',  'car',
+        'tel',        'est',         'mon',
+        'nom.',       '',            'Ma',
+        'mère',       "m'appelle",   '"Petit-Chou".'
+    ];
+    console.assert(tableauxSontEgaux(expectedExemple, computedExemple));
 
-     var modele = creerModele(texteExemple);
+
+    //var modele = creerModele(texteExemple);
     // var dico = {"Je":0, "En":0, "Ma":0};
     // for (let i = 0; i < 1000000; i++) {
     //     var a = genererProchainMot(modele, "");
@@ -239,8 +297,53 @@ var tests = function() {
     // }
 
     //var a = genererPhrase(modele, 20);
-    var paragraphes = genererParagraphes(modele, 4, 6, 10);
-    console.log(paragraphes);
+    //var paragraphes = genererParagraphes(modele, 4, 6, 10);
+    //console.log(paragraphes);
+
+    // ---------------------------------------------------------
+    //  ajouterProchainMot
+    // ---------------------------------------------------------
+    var tabDico = [{mot: "Je", prob: 1.0, freq: 1}, {mot: "m'appelle", prob: 1.0, freq: 1}];
+    ajouterProchainMot(tabDico, "Je");
+    console.assert(tabDico[0].freq == 2);
+
+    ajouterProchainMot(tabDico, "Marguerite");
+    console.assert(tabDico[2].mot == "Marguerite");
+
+    // ---------------------------------------------------------
+    //  calculerProb
+    // ---------------------------------------------------------
+
+    // ---------------------------------------------------------
+    //  supprimerNbOccDuModele
+    // ---------------------------------------------------------
+
+    // ---------------------------------------------------------
+    //  creerModele
+    // ---------------------------------------------------------
+
+    // ---------------------------------------------------------
+    //  genererProchainMot
+    // ---------------------------------------------------------
+
+    // ---------------------------------------------------------
+    //  genererPhrase
+    // ---------------------------------------------------------
+
+    // ---------------------------------------------------------
+    //  genererParagraphes
+    // ---------------------------------------------------------
+
+
+
+
+
+
+
+};
+
+var tableauxSontEgaux = function(tab1, tab2) {
+    return JSON.stringify(tab1) == JSON.stringify(tab2);
 };
 
 if (require.main === module) {
