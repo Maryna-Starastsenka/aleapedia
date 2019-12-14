@@ -281,18 +281,17 @@ var sendPage = function (reponse, page) {
 -------------------------------------------------------------------------------
 */
 
-
-
-
 // -------------------------------------
 //  Logique de l'application ci-dessous
 //    LE SEUL CODE QUE VOUS AVEZ À
 //       MODIFIER EST CI-DESSOUS
 // -------------------------------------
 
-// fonction outil qui sert à remplacer quelques caractere speciaux 
-function escapeHtml(unsafe) {
-    return unsafe
+/*
+ * Prend en param du texte et remplace des caractères spéciaux
+ */
+var escapeHtml = function (texte) {
+    return texte
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -300,56 +299,76 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 };
 
+/*
+ * Prend en param du texte, une étiquette et une valeur
+ * et retourne le texte avec toutes les occurences de l'étiquette
+ * remplacées par la valeur
+ */
 var substituerEtiquette = function (texte, etiquette, valeur) {
     while (texte.indexOf(etiquette) !== -1) {
-        if (etiquette.substring(0, 3) === '{{{' && etiquette.substring(etiquette.length - 3) === '}}}') {
+        if (etiquette.substring(0, 3) === '{{{' &&
+            etiquette.substring(etiquette.length - 3) === '}}}') {
             texte =  texte.substring(0, texte.indexOf(etiquette)) + valeur + texte.substring(texte.indexOf(etiquette) + etiquette.length);
         } else if (etiquette.substring(0, 2) === '{{' && etiquette.substring(etiquette.length - 2) === '}}') {
             texte =  texte.substring(0, texte.indexOf(etiquette)) + escapeHtml(valeur) + texte.substring(texte.indexOf(etiquette) + etiquette.length);
         } else {
-            return texte; // la fonction retourne le meme texte 
-                          // s'il y a une erreur d'etiquette 
+            // la fonction retourne le meme texte
+            // s'il y a une erreur d'etiquette
+            return texte;
         }
     }
     return texte;
 };
 
+/*
+ * Retourne le contenu du fichier template/index.html dont les étiquettes ont
+ * été remplacées
+ */
 var getIndex = function () {
     const n = 20;
-
     const imageSrc = getImage('random');
     const articles = getRandomPageTitles(n);
-    //recuperer le contenu du fichier index.html
+
+    // récupérer le contenu du fichier index.html
     let page = readFile('template/index.html');
-    //remplacer l'etiquette dans le contenu 
+
+    // remplacer l'étiquette dans le contenu
     page = substituerEtiquette(page, '{{img}}', imageSrc);
     var articleHtml = '';
 
-    for (let i = 0; i < n; i++) { // création d'une liste des liens recuperés 
+    // création d'une liste des liens récupérés
+    for (let i = 0; i < n; i++) {
         articleHtml += '<li><a href="/article/' + articles[i] + '">' + articles[i] + '</a></li>\n';
     }
-    // remplacer l'etiquette par la liste 
+
+    // remplacer l'étiquette par la liste
     page = substituerEtiquette(page, '{{{articles-recents}}}', articleHtml);
 
     return page;
 };
 
-
+/*
+ * Retourne le contenu du fichier template/article.html avec des substitutions
+ */
 var getArticle = function(titre) {
     const imageSrc = getImage(titre);
-    //recuperer une phrase au hasard 
+    //récupérer une phrase au hasard
     let premierePhrase = premieresPhrases[Math.floor(Math.random() * premieresPhrases.length)];
-    // remplacer les etiquettes de la premiere phrase par les titres souhaités
+
+    // remplacer les étiquettes de la première phrase par les titres souhaités
     premierePhrase = substituerEtiquette(premierePhrase, '{{titre}}', titre);
     premierePhrase = substituerEtiquette(premierePhrase, '{{titre-1}}', titre.substring(0, titre.length / 2));
     premierePhrase = substituerEtiquette(premierePhrase, '{{titre-2}}', titre.substring(titre.length / 2));
 
     let modele = creerModele(readFile('corpus/wikipedia'));
 
-    let contenu = [ // generer un article 
+    // génerer un article
+    let contenu = [
         premierePhrase,
-        ...genererParagraphes(modele, // la fonction retourne un tableau qui sera transformé directement en éléments du tableau contenu 
-            4 + Math.floor(Math.random() * 3), // nombre de paragraghes entre 4 et 7 
+        // retourne un tableau qui sera transformé directement en éléments du tableau contenu
+        ...genererParagraphes(modele,
+            // nombre de paragraghes entre 4 et 7
+            4 + Math.floor(Math.random() * 3),
             11, // chaque paragraphe contient entre 1 et 11 phrases 
             40) // une phrase est composée de maximum 40 mots 
     ];
@@ -381,40 +400,57 @@ var getArticle = function(titre) {
     return page;
 };
 
-var test = function () {
-    if (substituerEtiquette('université de {{{toronto}}} est située à {{{toronto}}}', '{{{toronto}}}', 
-        'montréal') !== 'université de montréal est située à montréal'){
-            console.log('Erreur substituerEtiquette');
-        }
-    
-    if (substituerEtiquette('université de {{{toronto}}}', '{{{montreal}}}', 
-        'montréal') !== 'université de {{{toronto}}}'){
-            console.log('Erreur substituerEtiquette');
-        }
-    
-    if (substituerEtiquette('université de {{toronto}} est située à {{toronto}}', '{{toronto}}', 
-        'montréal') !== 'université de montréal est située à montréal'){
-            console.log('Erreur substituerEtiquette');
-        }
-    
-    if (substituerEtiquette('université de {{toronto}}', '{{montreal}}', 
-        'montréal') !== 'université de {{toronto}}'){
-            console.log('Erreur substituerEtiquette');
-        }
-        
-    if (substituerEtiquette('une inégalité de type {{eq}} est fausse', '{{eq}}', 
-        '8 < 5') !== 'une inégalité de type 8 &lt; 5 est fausse'){
-            console.log('Erreur substituerEtiquette');
-        }
-    
-    if (substituerEtiquette('université de {toronto}', '{toronto}', 
-        'montréal') !== 'université de {toronto}'){
-            console.log('Erreur substituerEtiquette');
-        }
-    
-    
-    }
-test(); 
+// ---------------------------------------------------------
+//  Tests
+// ---------------------------------------------------------
+var escapeHtml = function (texte) {
+    return texte
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
+var tests = function () {
+    // ---------------------------------------------------------
+    //  substituerEtiquette
+    // ---------------------------------------------------------
+    var texte1 = 'université de {{{toronto}}} est située à {{{toronto}}}';
+    var etiquette1 = '{{{toronto}}}';
+    var valeur1 = 'montréal';
+    var expected1 = 'université de montréal est située à montréal';
+    console.assert(expected1 == substituerEtiquette(texte1, etiquette1, valeur1));
+
+    var texte2 = 'université de {{{toronto}}}';
+    var etiquette2 = '{{{montreal}}}';
+    var valeur2 = 'montréal';
+    console.assert(texte2 == substituerEtiquette(texte2, etiquette2, valeur2));
+
+    var texte3 = 'université de {{toronto}} est située à {{toronto}}';
+    var etiquette3 = '{{toronto}}';
+    var valeur3 = 'montréal';
+    var expected3 = 'université de montréal est située à montréal';
+    console.assert(expected3 == substituerEtiquette(texte3, etiquette3, valeur3));
+
+    var texte4 = 'université de {{toronto}}';
+    var etiquette4 = '{{montreal}}';
+    var valeur4 = 'montréal';
+    var expected4 = 'université de {{toronto}}';
+    console.assert(expected4 == substituerEtiquette(texte4, etiquette4, valeur4));
+
+    var texte5 = 'une inégalité de type {{eq}} est fausse';
+    var etiquette5 = '{{eq}}';
+    var valeur5 = '8 < 5';
+    var expected5 = 'une inégalité de type 8 &lt; 5 est fausse';
+    console.assert(expected5 == substituerEtiquette(texte5, etiquette5, valeur5));
+
+    var texte6 = 'université de {toronto}';
+    var etiquette6 = '{toronto}';
+    var valeur6 = 'montréal';
+    var expected6 = 'université de {toronto}';
+    console.assert(expected6 == substituerEtiquette(texte6, etiquette6, valeur6));
+};
 
 /*
  * Création du serveur HTTP
