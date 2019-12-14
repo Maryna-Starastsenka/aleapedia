@@ -1,3 +1,6 @@
+// Auteurs :
+// Maryna Starastsenka (20166402), Ahmed Braik (20139676)
+
 // Utilitaires pour manipuler des fichiers
 var fs = require("fs");
 
@@ -120,19 +123,25 @@ var creerModele = function(texte) {
     var tailleMots = mots.length;
     mots.forEach((mot, idx) => {
         if (idx < tailleMots - 1) {
-            if (mot in dicoCache) { // plus rapide que indexOf sur un tableau
+            // plus rapide que indexOf sur un tableau
+            if (mot in dicoCache) { 
                 var idxCache = dicoCache[mot];
-                // on ajoute le mot suivant observé ou on incrémente sa fréq
+                // on ajoute le mot suivant observé ou 
+                // on incrémente sa fréq
                 modele.prochainsMots[idxCache] = ajouterProchainMot(
                     modele.prochainsMots[idxCache], mots[idx + 1]);
                 // on garde en mémoire le nombre de mots suivants
                 // que présente le mot courant
                 nbMotsSuivants[idxCache] += 1;
             } else {
-                modele.dictionnaire.push(mot); // on ajoute le mot jamais vu
-                dicoCache[mot] = modele.dictionnaire.length - 1; // et on retient son indice
-                // le mot est nouveau donc il n'y a pas encore de mot suivant pour ce mot
-                modele.prochainsMots.push([{mot: mots[idx + 1], prob: 1.0, freq: 1}]);
+                // on ajoute le mot jamais vu
+                modele.dictionnaire.push(mot); 
+                // et on retient son indice
+                dicoCache[mot] = modele.dictionnaire.length - 1; 
+                // le mot est nouveau donc il n'y a pas encore 
+                // de mot suivant pour ce mot
+                modele.prochainsMots.push([{mot: mots[idx + 1], 
+                    prob: 1.0, freq: 1}]);
                 nbMotsSuivants.push(1);
             }
         }
@@ -199,7 +208,8 @@ var genererPhrase = function(modele, maxNbMots) {
  * et retourne un tableau de paragraphes avec entre 1 et maxNbPhrases
  * par paragraphe.
  */
-var genererParagraphes = function(modele, nbParagraphes, maxNbPhrases, maxNbMots) {
+var genererParagraphes = function(modele, nbParagraphes, 
+    maxNbPhrases, maxNbMots) {
     var nbParagraphesCourant = 0;
     var paragraphes = [];
 
@@ -268,7 +278,8 @@ var tests = function() {
         '', 'C', 'B', 'A.'
     ];
 
-    console.assert(tableauxSontEgaux(expectedTrivial, computedTrivial));
+    console.assert(
+        tableauxSontEgaux(expectedTrivial, computedTrivial));
 
     var texteExemple = readFile('corpus/exemple');
     var computedExemple = texteEnMots(texteExemple);
@@ -286,12 +297,14 @@ var tests = function() {
         'nom.',       '',            'Ma',
         'mère',       "m'appelle",   '"Petit-Chou".'
     ];
-    console.assert(tableauxSontEgaux(expectedExemple, computedExemple));
+    console.assert(
+        tableauxSontEgaux(expectedExemple, computedExemple));
 
     // ---------------------------------------------------------
     //  ajouterProchainMot
     // ---------------------------------------------------------
-    var tabDico = [{mot: "Je", prob: 1.0, freq: 1}, {mot: "m'appelle", prob: 1.0, freq: 1}];
+    var tabDico = [{mot: "Je", prob: 1.0, freq: 1}, 
+    {mot: "m'appelle", prob: 1.0, freq: 1}];
     ajouterProchainMot(tabDico, "Je");
     console.assert(tabDico[0].freq == 2);
 
@@ -303,19 +316,26 @@ var tests = function() {
     // ---------------------------------------------------------
     var modeleSimplifie = {
         prochainsMots: [
-            [{mot: "Je", prob: 1.0, freq: 4}, {mot: "m'appelle", prob: 1.0, freq: 1}],
-            [{mot: "ainsi", prob: 1.0, freq: 1}, {mot: "Je", prob: 1.0, freq: 2}, {mot: "crois", prob: 1.0, freq: 1}]
+            [{mot: "Je", prob: 1.0, freq: 4}, 
+            {mot: "m'appelle", prob: 1.0, freq: 1}],
+            [{mot: "ainsi", prob: 1.0, freq: 1}, 
+            {mot: "Je", prob: 1.0, freq: 2}, 
+            {mot: "crois", prob: 1.0, freq: 1}]
         ]
     };
     var modeleSimplifieExpected = {
         prochainsMots: [
-            [{mot: "Je", prob: 0.8, freq: 4}, {mot: "m'appelle", prob: 0.2, freq: 1}],
-            [{mot: "ainsi", prob: 0.25, freq: 1}, {mot: "Je", prob: 0.5, freq: 2}, {mot: "crois", prob: 0.25, freq: 1}]
+            [{mot: "Je", prob: 0.8, freq: 4}, 
+            {mot: "m'appelle", prob: 0.2, freq: 1}],
+            [{mot: "ainsi", prob: 0.25, freq: 1}, 
+            {mot: "Je", prob: 0.5, freq: 2}, 
+            {mot: "crois", prob: 0.25, freq: 1}]
         ]
     };
     var nbMotsSuivants = [5, 4];
     calculerProb(modeleSimplifie, nbMotsSuivants);
-    console.assert(tableauxSontEgaux(modeleSimplifieExpected, modeleSimplifie));
+    console.assert(
+        tableauxSontEgaux(modeleSimplifieExpected, modeleSimplifie));
 
     // ---------------------------------------------------------
     //  supprimerNbOccDuModele
@@ -323,11 +343,13 @@ var tests = function() {
     var modeleSimplifie2Expected = {
         prochainsMots: [
             [{mot: "Je", prob: 0.8}, {mot: "m'appelle", prob: 0.2}],
-            [{mot: "ainsi", prob: 0.25}, {mot: "Je", prob: 0.5}, {mot: "crois", prob: 0.25}]
+            [{mot: "ainsi", prob: 0.25}, 
+            {mot: "Je", prob: 0.5}, {mot: "crois", prob: 0.25}]
         ]
     };
     supprimerNbOccDuModele(modeleSimplifie);
-    console.assert(tableauxSontEgaux(modeleSimplifie2Expected, modeleSimplifie));
+    console.assert(
+        tableauxSontEgaux(modeleSimplifie2Expected, modeleSimplifie));
 
     // ---------------------------------------------------------
     //  creerModele
@@ -346,7 +368,8 @@ var tests = function() {
                 [{"mot":"", "prob":1}],
                 [{"mot":"B", "prob":1}]
             ]};
-    console.assert(tableauxSontEgaux(modeleTrivialExpected, modeleTrivial));
+    console.assert(
+        tableauxSontEgaux(modeleTrivialExpected, modeleTrivial));
 
     var modeleExemple = creerModele(texteExemple);
     var modeleExempleExpected = {
@@ -356,27 +379,32 @@ var tests = function() {
                 "de","ma","mère.","En","général,","on","car","tel",
                 "mon","nom.","Ma","mère"],
         prochainsMots:[
-            [{"mot":"Je","prob":0.5},{"mot":"En","prob":0.25},{"mot":"Ma","prob":0.25}],
+            [{"mot":"Je","prob":0.5},
+            {"mot":"En","prob":0.25},{"mot":"Ma","prob":0.25}],
             [{"mot":"m'appelle","prob":1}],
-            [{"mot":"Marguerite","prob":0.5},{"mot":"ainsi","prob":0.25},
+            [{"mot":"Marguerite","prob":0.5},
+            {"mot":"ainsi","prob":0.25},
                 {"mot":"\"Petit-Chou\".","prob":0.25}],
             [{"mot":"Lafontaine.","prob":0.3333333333333333},
                 {"mot":"est","prob":0.3333333333333333},
                 {"mot":"car","prob":0.3333333333333333}],
             [{"mot":"","prob":1}],[{"mot":"parce","prob":1}],
             [{"mot":"que","prob":1}],[{"mot":"la","prob":1}],
-            [{"mot":"Marguerite","prob":0.5},{"mot":"fleur","prob":0.5}],
+            [{"mot":"Marguerite","prob":0.5},
+            {"mot":"fleur","prob":0.5}],
             [{"mot":"la","prob":0.5},{"mot":"mon","prob":0.5}],
             [{"mot":"préférée","prob":1}],[{"mot":"de","prob":1}],
             [{"mot":"ma","prob":1}],
             [{"mot":"mère.","prob":1}],[{"mot":"","prob":1}],
             [{"mot":"général,","prob":1}],[{"mot":"on","prob":1}],
             [{"mot":"m'appelle","prob":1}],[{"mot":"tel","prob":1}],
-            [{"mot":"est","prob":1}],[{"mot":"nom.","prob":1}],[{"mot":"","prob":1}],
+            [{"mot":"est","prob":1}],[{"mot":"nom.","prob":1}],
+            [{"mot":"","prob":1}],
             [{"mot":"mère","prob":1}],[{"mot":"m'appelle","prob":1}]
         ]
     };
-    console.assert(tableauxSontEgaux(modeleExempleExpected, modeleExemple));
+    console.assert(
+        tableauxSontEgaux(modeleExempleExpected, modeleExemple));
 
     // ---------------------------------------------------------
     //  genererProchainMot
@@ -384,8 +412,11 @@ var tests = function() {
     var prochainMotTrivial = genererProchainMot(modeleTrivial, "");
     console.assert(['A', 'C'].includes(prochainMotTrivial));
 
-    var prochainMotExemple = genererProchainMot(modeleExemple, "m'appelle");
-    console.assert(['Marguerite', 'ainsi', "\"Petit-Chou\"."].includes(prochainMotExemple));
+    var prochainMotExemple = 
+        genererProchainMot(modeleExemple, "m'appelle");
+    console.assert(
+        ['Marguerite', 'ainsi', "\"Petit-Chou\"."]
+            .includes(prochainMotExemple));
 
     // ---------------------------------------------------------
     //  genererPhrase
@@ -410,7 +441,8 @@ var tableauxSontEgaux = function(tab1, tab2) {
 };
 
 if (require.main === module) {
-    // Si on se trouve ici, alors le fichier est exécuté via : nodejs gen.js
+    // Si on se trouve ici, alors le fichier 
+    // est exécuté via : nodejs gen.js
     tests(); // On lance les tests
 } else {
     /* Sinon, le fichier est inclus depuis index.js

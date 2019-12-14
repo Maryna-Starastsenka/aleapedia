@@ -1,3 +1,6 @@
+// Auteurs :
+// Maryna Starastsenka (20166402), Ahmed Braik (20139676)
+
 'use strict';
 
 var http = require("http");
@@ -21,15 +24,36 @@ var genererParagraphes = markov.genererParagraphes;
 // Ajoutez-en si vous avez des idées!
 var premieresPhrases = [
     "<strong>{{titre}}</strong> est un animal aquatique nocturne.",
-    "<strong>{{titre}}</strong> (du grec ancien <em>\"{{titre-1}}\"</em> et <em>\"{{titre-2}}\"</em>), est le nom donné par Aristote à la vertu politique.",
-    "<strong>{{titre}}</strong>, né le 30 août 1987 à Portland (Oregon), est un scénariste américain.",
-    "<strong>{{titre}}</strong>, née le 30 septembre 1982 à Québec, est une femme politique québécoise.",
-    "<strong>{{titre}}</strong> est défini comme « l'ensemble des règles imposées aux membres d'une société pour que leurs rapports sociaux échappent à l'arbitraire et à la violence des individus et soient conformes à l'éthique dominante ».",
-    "<strong>{{titre}}</strong>, néologisme du XXe siècle, attesté en 1960, composite du grec ancien <em>{{titre-1}}</em> et du latin <em>{{titre-2}}</em>, est le principe déclencheur d'événements non liés à une cause connue.",
-    "<strong>{{titre}}</strong> est une espèce fossile d'euryptérides ressemblant aux arachnides, appartenant à la famille des <em>{{titre-1}}</em>.",
-    "<strong>{{titre}}</strong>, né le 25 juin 1805 à Lyon et mort le 12 février 1870 à Versailles, est un peintre animalier français.",
-    "<strong>{{titre}}</strong> est le titre d'un épisode de la série télévisée d'animation Les Simpson. Il s'agit du quatre-vingt-dix-neuvième épisode de la soixante-huitième saison et du 8 615e épisode de la série.",
-    "<strong>{{titre}}</strong>, composé de <em>{{titre-1}}</em>- et de -<em>{{titre-2}}</em>, consiste en l'étude d'une langue et de sa littérature à partir de documents écrits."
+    "<strong>{{titre}}</strong> (du grec ancien <em>\"{{titre-1}}\"" +
+    "</em> et <em>\"{{titre-2}}\"</em>), est le nom donné par " +
+    "Aristote à la vertu politique.",
+    "<strong>{{titre}}</strong>, né le 30 août 1987 à Portland " +
+    "(Oregon), est un scénariste américain.",
+    "<strong>{{titre}}</strong>, née le 30 septembre 1982 à " +
+    "Québec, est une femme politique québécoise.",
+    "<strong>{{titre}}</strong> est défini comme « l'ensemble des " +
+    "règles imposées aux membres d'une société pour que leurs " +
+    "rapports sociaux échappent à l'arbitraire et à la violence " +
+    "des individus et soient conformes à l'éthique dominante ».",
+    "<strong>{{titre}}</strong>, néologisme du XXe siècle, " +
+    "attesté en 1960, composite du grec ancien " +
+    "<em>{{titre-1}}</em> et du latin <em>{{titre-2}}</em>, " +
+    "est le principe déclencheur d'événements non liés à une " +
+    "cause connue.",
+    "<strong>{{titre}}</strong> est une espèce fossile " +
+    "d'euryptérides ressemblant aux arachnides, appartenant " +
+    "à la famille des <em>{{titre-1}}</em>.",
+    "<strong>{{titre}}</strong>, né le 25 juin 1805 à Lyon et" +
+    " mort le 12 février 1870 à Versailles, est un peintre " +
+    "animalier français.",
+    "<strong>{{titre}}</strong> est le titre d'un épisode de " +
+    "la série télévisée d'animation Les Simpson. Il s'agit " +
+    "du quatre-vingt-dix-neuvième épisode de la " +
+    "soixante-huitième saison et du 8 615e épisode de la série.",
+    "<strong>{{titre}}</strong>, composé de " +
+    "<em>{{titre-1}}</em>- et de -<em>{{titre-2}}</em>, " +
+    "consiste en l'étude d'une langue et de sa " +
+    "littérature à partir de documents écrits."
 ];
 
 // --- Utilitaires ---
@@ -82,7 +106,9 @@ var jsonRequestSync = function(url) {
  * Wikipédia français
  */
 var getRandomPageTitles = function(n) {
-    var req = jsonRequestSync('https://fr.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=' + n + '&format=json');
+    var req = jsonRequestSync('https://fr.wikipedia.org/' +
+        'w/api.php?action=query&list=random&rnnamespace=0&' +
+        'rnlimit=' + n + '&format=json');
 
     if(!req) {
         return Array(n).fill("Pas d'internet");
@@ -94,7 +120,8 @@ var getRandomPageTitles = function(n) {
 };
 
 var md5 = function(data) {
-    return crypto.createHash('md5').update(data).digest("hex");
+    return crypto.createHash('md5')
+        .update(data).digest("hex");
 };
 
 /*
@@ -102,11 +129,13 @@ var md5 = function(data) {
  * retourne son URL
  */
 var fileUrl = function(wikipediaName) {
-    var filename = wikipediaName.slice('Fichier:'.length).split(' ').join('_');
+    var filename = wikipediaName
+        .slice('Fichier:'.length).split(' ').join('_');
 
     var hash = md5(filename).slice(0, 2);
 
-    return "https://upload.wikimedia.org/wikipedia/commons/" + hash[0] + '/' + hash + '/' + filename;
+    return "https://upload.wikimedia.org/wikipedia/commons/" +
+        hash[0] + '/' + hash + '/' + filename;
 };
 
 /*
@@ -116,8 +145,9 @@ var fileUrl = function(wikipediaName) {
 var getPageFirstImage = function(title) {
     var encodedTitle = encodeURIComponent(title);
 
-    var pageUrl = "https://fr.wikipedia.org/w/api.php?action=query&titles=" +
-                  encodedTitle + "&format=json&prop=images&imlimit=30";
+    var pageUrl = "https://fr.wikipedia.org/w/api.php?" +
+        "action=query&titles=" +
+        encodedTitle + "&format=json&prop=images&imlimit=30";
 
     var req = jsonRequestSync(pageUrl);
 
@@ -140,7 +170,8 @@ var getPageFirstImage = function(title) {
 
         images = images.filter(function(x) {
             var parts = x.split('.');
-            return ['jpg', 'png', 'jpeg', 'gif'].indexOf(parts[parts.length - 1]) !== -1;
+            return ['jpg', 'png', 'jpeg', 'gif']
+                .indexOf(parts[parts.length - 1]) !== -1;
         });
 
         if(images.length > 0)
@@ -244,12 +275,14 @@ var getDocument = function (url) {
 
     try {
         if(['.png', '.jpg'].indexOf(parsedPath.ext) !== -1) {
-            result.data = readFile('./public' + pathname, {encoding: 'binary'});
+            result.data = readFile('./public'
+                + pathname, {encoding: 'binary'});
             result.encoding = 'binary';
         } else {
             result.data = readFile('./public' + pathname);
         }
-        console.log('['+new Date().toLocaleString('iso') + "] GET " + url.path);
+        console.log('['+new Date()
+            .toLocaleString('iso') + "] GET " + url.path);
     } catch (e) {
         // File not found.
         console.log('['+new Date().toLocaleString('iso') + "] GET " +
@@ -270,7 +303,7 @@ var sendPage = function (reponse, page) {
 
 
 /*
--------------------------------------------------------------------------------
+---------------------------------------------------------------
                            _____ ___  ____   ___
                           |_   _/ _ \|  _ \ / _ \
                             | || | | | | | | | | |
@@ -278,7 +311,7 @@ var sendPage = function (reponse, page) {
                             |_| \___/|____/ \___/
 
                    Le code à compléter se trouve ci-dessous
--------------------------------------------------------------------------------
+--------------------------------------------------------------
 */
 
 // -------------------------------------
@@ -308,9 +341,14 @@ var substituerEtiquette = function (texte, etiquette, valeur) {
     while (texte.indexOf(etiquette) !== -1) {
         if (etiquette.substring(0, 3) === '{{{' &&
             etiquette.substring(etiquette.length - 3) === '}}}') {
-            texte =  texte.substring(0, texte.indexOf(etiquette)) + valeur + texte.substring(texte.indexOf(etiquette) + etiquette.length);
-        } else if (etiquette.substring(0, 2) === '{{' && etiquette.substring(etiquette.length - 2) === '}}') {
-            texte =  texte.substring(0, texte.indexOf(etiquette)) + escapeHtml(valeur) + texte.substring(texte.indexOf(etiquette) + etiquette.length);
+            texte =  texte.substring(0, texte.indexOf(etiquette))
+                + valeur + texte.substring(texte.indexOf(etiquette)
+                    + etiquette.length);
+        } else if (etiquette.substring(0, 2) === '{{' && etiquette
+            .substring(etiquette.length - 2) === '}}') {
+            texte =  texte.substring(0, texte.indexOf(etiquette))
+                + escapeHtml(valeur) + texte.substring(
+                    texte.indexOf(etiquette) + etiquette.length);
         } else {
             // la fonction retourne le meme texte
             // s'il y a une erreur d'etiquette
@@ -321,7 +359,8 @@ var substituerEtiquette = function (texte, etiquette, valeur) {
 };
 
 /*
- * Retourne le contenu du fichier template/index.html dont les étiquettes ont
+ * Retourne le contenu du fichier template/index.html
+ * dont les étiquettes ont
  * été remplacées
  */
 var getIndex = function () {
@@ -338,34 +377,45 @@ var getIndex = function () {
 
     // création d'une liste des liens récupérés
     for (let i = 0; i < n; i++) {
-        articleHtml += '<li><a href="/article/' + articles[i] + '">' + articles[i] + '</a></li>\n';
+        articleHtml += '<li><a href="/article/'
+            + articles[i] + '">' + articles[i] + '</a></li>\n';
     }
 
     // remplacer l'étiquette par la liste
-    page = substituerEtiquette(page, '{{{articles-recents}}}', articleHtml);
+    page = substituerEtiquette(page,
+        '{{{articles-recents}}}', articleHtml);
 
     return page;
 };
 
 /*
- * Retourne le contenu du fichier template/article.html avec des substitutions
+ * Retourne le contenu du fichier template/article.html
+ * avec des substitutions
  */
 var getArticle = function(titre) {
     const imageSrc = getImage(titre);
     //récupérer une phrase au hasard
-    let premierePhrase = premieresPhrases[Math.floor(Math.random() * premieresPhrases.length)];
+    let premierePhrase = premieresPhrases[Math
+        .floor(Math.random() * premieresPhrases.length)];
 
-    // remplacer les étiquettes de la première phrase par les titres souhaités
-    premierePhrase = substituerEtiquette(premierePhrase, '{{titre}}', titre);
-    premierePhrase = substituerEtiquette(premierePhrase, '{{titre-1}}', titre.substring(0, titre.length / 2));
-    premierePhrase = substituerEtiquette(premierePhrase, '{{titre-2}}', titre.substring(titre.length / 2));
+    // remplacer les étiquettes de la première phrase
+    // par les titres souhaités
+    premierePhrase = substituerEtiquette(
+        premierePhrase, '{{titre}}', titre);
+    premierePhrase = substituerEtiquette(
+        premierePhrase, '{{titre-1}}', titre
+            .substring(0, titre.length / 2));
+    premierePhrase = substituerEtiquette(
+        premierePhrase, '{{titre-2}}', titre
+            .substring(titre.length / 2));
 
     let modele = creerModele(readFile('corpus/wikipedia'));
 
     // génerer un article
     let contenu = [
         premierePhrase,
-        // retourne un tableau qui sera transformé directement en éléments du tableau contenu
+        // retourne un tableau qui sera transformé directement
+        // en éléments du tableau contenu
         ...genererParagraphes(modele,
             // nombre de paragraghes entre 4 et 7
             4 + Math.floor(Math.random() * 3),
@@ -374,7 +424,8 @@ var getArticle = function(titre) {
     ];
 
     contenu = contenu.map(paragraphe => {
-        // restructurer l'article à l'aide des tags <p>, <strong>, <em> et <a>.
+        // restructurer l'article à l'aide des tags <p>,
+        // <strong>, <em> et <a>.
         return '<p>' + paragraphe.split(' ').map(mot => {
             if (mot.length >=  7) {
                 const prob = Math.random();
@@ -384,7 +435,8 @@ var getArticle = function(titre) {
                 else if (prob <= 0.30) 
                     return '<em>' + mot + '</em>';
                 else if (prob <= 0.45) 
-                    return '<a href="/article/' + mot + '">' + mot + '</a>';
+                    return '<a href="/article/' + mot + '">'
+                        + mot + '</a>';
                 else return mot;
             }
             return mot;
@@ -416,40 +468,50 @@ var tests = function () {
     // ---------------------------------------------------------
     //  substituerEtiquette
     // ---------------------------------------------------------
-    var texte1 = 'université de {{{toronto}}} est située à {{{toronto}}}';
+    var texte1 = 'université de {{{toronto}}} est ' +
+        'située à {{{toronto}}}';
     var etiquette1 = '{{{toronto}}}';
     var valeur1 = 'montréal';
-    var expected1 = 'université de montréal est située à montréal';
-    console.assert(expected1 == substituerEtiquette(texte1, etiquette1, valeur1));
+    var expected1 = 'université de montréal est ' +
+        'située à montréal';
+    console.assert(expected1 ==
+        substituerEtiquette(texte1, etiquette1, valeur1));
 
     var texte2 = 'université de {{{toronto}}}';
     var etiquette2 = '{{{montreal}}}';
     var valeur2 = 'montréal';
-    console.assert(texte2 == substituerEtiquette(texte2, etiquette2, valeur2));
+    console.assert(texte2 ==
+        substituerEtiquette(texte2, etiquette2, valeur2));
 
-    var texte3 = 'université de {{toronto}} est située à {{toronto}}';
+    var texte3 = 'université de {{toronto}} est ' +
+        'située à {{toronto}}';
     var etiquette3 = '{{toronto}}';
     var valeur3 = 'montréal';
-    var expected3 = 'université de montréal est située à montréal';
-    console.assert(expected3 == substituerEtiquette(texte3, etiquette3, valeur3));
+    var expected3 = 'université de montréal est ' +
+        'située à montréal';
+    console.assert(expected3 ==
+        substituerEtiquette(texte3, etiquette3, valeur3));
 
     var texte4 = 'université de {{toronto}}';
     var etiquette4 = '{{montreal}}';
     var valeur4 = 'montréal';
     var expected4 = 'université de {{toronto}}';
-    console.assert(expected4 == substituerEtiquette(texte4, etiquette4, valeur4));
+    console.assert(expected4 ==
+        substituerEtiquette(texte4, etiquette4, valeur4));
 
     var texte5 = 'une inégalité de type {{eq}} est fausse';
     var etiquette5 = '{{eq}}';
     var valeur5 = '8 < 5';
     var expected5 = 'une inégalité de type 8 &lt; 5 est fausse';
-    console.assert(expected5 == substituerEtiquette(texte5, etiquette5, valeur5));
+    console.assert(expected5 ==
+        substituerEtiquette(texte5, etiquette5, valeur5));
 
     var texte6 = 'université de {toronto}';
     var etiquette6 = '{toronto}';
     var valeur6 = 'montréal';
     var expected6 = 'université de {toronto}';
-    console.assert(expected6 == substituerEtiquette(texte6, etiquette6, valeur6));
+    console.assert(expected6 ==
+        substituerEtiquette(texte6, etiquette6, valeur6));
 };
 
 /*
@@ -473,7 +535,8 @@ http.createServer(function (requete, reponse) {
         doc = {status: 200, data: getIndex(), type: 'text/html'};
     } else if(url.pathname == '/random') {
         // Page au hasard
-        redirect(reponse, '/article/' + encodeURIComponent(getRandomPageTitles(1)[0]));
+        redirect(reponse, '/article/'
+            + encodeURIComponent(getRandomPageTitles(1)[0]));
         return;
     } else {
         var parsedPath = pathParse(url.pathname);
@@ -487,14 +550,17 @@ http.createServer(function (requete, reponse) {
                 title = parsedPath.base.split('%20').join(' ');
             }
 
-            // Force les articles à commencer avec une majuscule si c'est une lettre
-            var capital = title.charAt(0).toUpperCase() + title.slice(1);
+            // Force les articles à commencer avec
+            // une majuscule si c'est une lettre
+            var capital = title.charAt(0).toUpperCase()
+                + title.slice(1);
             if(capital != title) {
                 redirect(reponse, encodeURIComponent(capital));
                 return;
             }
 
-            doc = {status: 200, data: getArticle(title), type: 'text/html'};
+            doc = {status: 200, data:
+                    getArticle(title), type: 'text/html'};
         } else {
             doc = getDocument(url);
         }
