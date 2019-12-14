@@ -378,30 +378,31 @@ var tests = function() {
     };
     console.assert(tableauxSontEgaux(modeleExempleExpected, modeleExemple));
 
-
-
     // ---------------------------------------------------------
     //  genererProchainMot
     // ---------------------------------------------------------
+    var prochainMotTrivial = genererProchainMot(modeleTrivial, "");
+    console.assert(['A', 'C'].includes(prochainMotTrivial));
+
+    var prochainMotExemple = genererProchainMot(modeleExemple, "m'appelle");
+    console.assert(['Marguerite', 'ainsi', "\"Petit-Chou\"."].includes(prochainMotExemple));
 
     // ---------------------------------------------------------
     //  genererPhrase
     // ---------------------------------------------------------
+    var phraseExemple;
+    var longueur;
+    for (var i = 0; i < 5; i++) {
+        phraseExemple = genererPhrase(modeleExemple, 3);
+        longueur = phraseExemple.split(' ').length;
+        console.assert(longueur >= 1 && longueur <= 3);
+    }
 
     // ---------------------------------------------------------
     //  genererParagraphes
     // ---------------------------------------------------------
-
-
-
-    //var a = genererPhrase(modele, 20);
-    //var paragraphes = genererParagraphes(modele, 4, 6, 10);
-    //console.log(paragraphes);
-
-
-
-
-
+    paragraphesExemple = genererParagraphes(modeleExemple, 3, 5, 10);
+    console.assert(paragraphesExemple.length == 3);
 };
 
 var tableauxSontEgaux = function(tab1, tab2) {
