@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Exercice1 {
@@ -9,9 +8,13 @@ public class Exercice1 {
      * plus.
      */
     public static String[] agrandirTab(String[] tab) {
-        String[] newTab = new String[tab.length + 1];
-        for (int i = 0; i < tab.length; i++) newTab[i] = tab[i];
-        return newTab;
+        String[] tabAgrandi = new String[tab.length + 1];
+
+        for (int i = 0; i < tab.length; i++) {
+            tabAgrandi[i] = tab[i];
+        }
+
+        return tabAgrandi;
     }
 
     /**
@@ -20,19 +23,19 @@ public class Exercice1 {
      * du début de la ligne entrée jusqu'au prochain \n.
      */
     public static String[] lireMots() {
-        String[] words = new String[0];
-        Scanner in = new Scanner(System.in);
-        String s = "";
-        while (in.hasNext()) {
-            String word = in.next();
+        String[] tab = new String[0];
+        Scanner scan = new Scanner(System.in);
 
-            if (word.equals("exit")) break;
+        while (scan.hasNext()) {
+            String motActuel = scan.nextLine();
 
-            words = agrandirTab(words);
-            words[words.length - 1] = word;
+            if (motActuel.equals("stop")) break;
+
+            tab = agrandirTab(tab);
+            tab[tab.length - 1] = motActuel;
         }
 
-        return words;
+        return tab;
     }
 
     /**
@@ -40,27 +43,23 @@ public class Exercice1 {
      * nouveau tableau contenant ces mots triés en ordre croissant.
      */
     public static String[] trier(String[] mots) {
-        String[] motsTries = new String[mots.length];
-        for (int i = 0; i < motsTries.length; i++) motsTries[i] = mots[i];
-
-        for (int i = 0; i < motsTries.length; i++) {
-            for (int j = 0; j < motsTries.length -1; j++) {
-                if (motsTries[j].compareTo(motsTries[j+1]) > 0) {
-                    var temp = motsTries[j];
-                    motsTries[j] = motsTries[j+1];
-                    motsTries[j+1] = temp;
-                }
-            }
-        }
-        //Arrays.sort(motsTries);
-        return motsTries;
-    }
-
-    public static boolean containsElement(String[] mots, String mot) {
+        // Tri par sélection
+        String[] tabTrie = new String[mots.length];
         for (int i = 0; i < mots.length; i++) {
-            if (mots[i].compareTo(mot) == 0) return true;
+            tabTrie[i] = mots[i];
         }
-        return false;
+
+        for (int i = 0; i < tabTrie.length - 1; i++) {
+            int temp = i;
+            for (int j = i + 1; j < tabTrie.length; j++) {
+                if (tabTrie[j].compareTo(tabTrie[temp]) < 0) temp = j;
+            }
+            String min = tabTrie[temp];
+            tabTrie[temp] = tabTrie[i];
+            tabTrie[i] = min;
+        }
+
+        return tabTrie;
     }
 
     /**
@@ -69,23 +68,28 @@ public class Exercice1 {
      * retirés).
      */
     public static String[] retirerDoublons(String[] mots) {
-        String[] motsSansDoublon = new String[0];
+        String[] motsUniques = new String[0];
 
         for (int i = 0; i < mots.length; i++) {
-            if (!containsElement(motsSansDoublon, mots[i])) {
-                motsSansDoublon = agrandirTab(motsSansDoublon);
-                motsSansDoublon[motsSansDoublon.length - 1] = mots[i];
+            boolean motEstUnique = true;
+            for (int j = 0; j < motsUniques.length; j++) {
+                if (mots[i].compareTo(motsUniques[j]) == 0)
+                    motEstUnique = false;
+            }
+            if (motEstUnique) {
+                motsUniques = agrandirTab(motsUniques);
+                motsUniques[motsUniques.length-1] = mots[i];
             }
         }
 
-        return motsSansDoublon;
+        return motsUniques;
     }
 
     /**
      * Fonction principale du programme (utilisée pour tester le code).
      */
     public static void main(String[] args) {
-        var mots = lireMots();
+        String[] mots = lireMots();
         mots = trier(mots);
         mots = retirerDoublons(mots);
 
