@@ -10,7 +10,7 @@ public class Exercice2 {
         System.out.println("--- Vecteurs ---");
         v1.afficher();
         v2.afficher();
-
+        
         System.out.println("--- Matrices ---");
         Matrice m1 = Matrice.identite(2);
         m1.multiplierScalaire(3);
@@ -29,5 +29,12 @@ public class Exercice2 {
         m3.afficher();
 
         // ... d'autres tests que vous écrirez ...
+        Matrice m4 = m1.transpose();
+        System.out.println("Matrice 4 :");
+        m4.afficher();
+
+        Matrice m5 = Matrice.identite(5);
+        System.out.println("Matrice 5 :");
+        m5.afficher();
     }
 }
