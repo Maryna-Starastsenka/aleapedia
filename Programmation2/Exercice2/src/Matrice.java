@@ -91,7 +91,7 @@ public class Matrice {
         for (int i = 0; i < nlignes; i++) {
             System.out.print("[ ");
             for (int j = 0; j < mcolonnes; j++) {
-                System.out.print(matrice[i][j] + " ");
+                System.out.print(getCell(i, j) + " ");
             }
             System.out.print("]\n");
         }
@@ -108,7 +108,6 @@ public class Matrice {
         }
         return newMatrice;
     }
-
 
 //    Retourne une instance de la matrice identité N x N
     public static Matrice identite(int n) {

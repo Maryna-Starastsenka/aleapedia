@@ -1,3 +1,5 @@
+// Nom : Maryna Starastsenka, Matricule : 20166402
+
 public class Exercice2 {
 
     public static void main(String[] args) {
@@ -10,7 +12,9 @@ public class Exercice2 {
         System.out.println("--- Vecteurs ---");
         v1.afficher();
         v2.afficher();
-        
+
+        System.out.println("Produit vectoriel de v1 et v2 : " + v1.dotProduct(v2));
+
         System.out.println("--- Matrices ---");
         Matrice m1 = Matrice.identite(2);
         m1.multiplierScalaire(3);
@@ -33,7 +37,7 @@ public class Exercice2 {
         System.out.println("Matrice 4 :");
         m4.afficher();
 
-        Matrice m5 = Matrice.identite(5);
+        Matrice m5 = Matrice.identite(4);
         System.out.println("Matrice 5 :");
         m5.afficher();
     }

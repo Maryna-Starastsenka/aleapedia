@@ -1,7 +1,6 @@
 public class Vecteur {
     private double[] elements;
 
-
     //    Constructeur avec en paramètre un tableau d'éléments de type
     //    `double`
     public Vecteur(double[] elements) {
@@ -34,7 +33,6 @@ public class Vecteur {
     }
 
     //    Affiche le contenu du vecteur entres accolades sur la console.
-
     //    Par exemple, le vecteur qui contient les nombres 1, 2 et 3 sera
     //    affiché avec :
     //    {1.0, 2.0, 3.0}
@@ -44,7 +42,6 @@ public class Vecteur {
             System.out.print(elements[i] + ", ");
         }
         System.out.print(elements[elements.length - 1] + "}\n");
-
     }
 }
 
