@@ -11,30 +11,34 @@ classe Dessin
 		
 		private int hauteur : hauteur de la surface
 		
-		private char[][] grille = new char[hauteur][largeur] : 
+		private char[][] grille = new char[hauteur][largeur] : // l'initialisation doit avoir lieu dans le constructeur de Dessin
 		tableau en 2D qui contient les caractères du dessin final
 		
-		private Forme formes[] : tableau qui contient les références 
+		private Forme[] formes : tableau qui contient les références // formes est un tableau de Forme
 		aux instances créées (nos formes)
 		
-		private char carActuel = '#' : caractère de dessin actuel
+		private char carActuel = '#' : caractère de dessin actuel // sachant qu'on ne vous demande que la structure du code, 
+																  // c'est un peu bizarre de donner une valeur ici. Plutôt le préciser
+																  // dans la description je pense : "caractère de dessin actuel initialisé
+																  // avec le caractère '#'"
 
 
 	Méthodes :
 
-		public Dessin(int largeur, int hauteur): Constructeur de la surface de dessin
+		public Dessin(int largeur, int hauteur) : Constructeur de la surface de dessin // initialise la aussi grille
 		
-		public void dessiner() : modifie la grille en utilisant 
-		les formes, appelle les méthodes "get" des formes instanciées afin de dessiner sur la surface
+		public void dessiner() : modifie la grille en utilisant les formes, appelle les méthodes "get" des formes instanciées afin de dessiner sur la surface
 		
-		public void brasser() : modifie aléatoirement les positions
-		individuelles de chaque forme
+		public void brasser() : modifie aléatoirement les positions individuelles de chaque forme
 		
-		public void renverser() : inverse l'ordre des lignes du 
-		tableau grille (symétrie verticale)
+		public void renverser() : inverse l'ordre des lignes du tableau grille (symétrie verticale) // il y a une erreur dans l'exemple du tp.
+																									// Une symétrie verticale inverse les colonnes, pas les lignes
 
-		public setCarActuel() : modifie le caractère actuel de dessin
+		public void setCarActuel(char nouveauChar) : modifie le caractère actuel de dessin // ne pas oublier le type de retour void et le paramètre d'entrée
 
+		// mauvaise pratique. On préfèrera avoir une seule méthode public void ajouterForme(Forme nouvelleForme)
+		// Il faut aussi une méthode public void lireCommande(String commande) qui va lire les commandes de la console.
+		// En fonction de ces commandes (avec un if ou switch), on va créer chacun des objets et les ajouter au tableau avec la méthode ajouterForme 
 
 		Différentes fonctions "ajouter" qui créent des instances des formes, 
 		elles appellent les constructeurs des formes:
@@ -62,15 +66,15 @@ classe abstract Forme
 
 	
 
-	Méthodes: 
+	Méthodes : 
 
 		public Forme (int posX, int posY, char car): Constructeur de la classe abstraite Forme
 		
-		public int[] getPos() : retourne les coordonnées X et Y
+		public int[] getPos() : retourne les coordonnées X et Y /c
 
-		public void setPos (int posX, int posY) : modifie la position
+		public void setPos (int posX, int posY) : modifie la position // idem, on veut un setPosX et un setPosY
 
-		public char getCar(): retourne le caractère à utiliser pour dessiner la forme
+		public char getCar() : retourne le caractère à utiliser pour dessiner la forme
 
 
 
@@ -88,7 +92,7 @@ classe Rectangle extends Forme
 		public Rectangle(int posX, int posY, int largeur, int hauteur, char car) : constructeur du rectangle, 
 		servira aussi pour le carré, appelle aussi le super constructeur de la classe abstraite Forme
 
-		public int[] getDimensions(): retourne un tableau contenant les deux dimensions (hauteur, largeur)
+		public int[] getDimensions() : retourne un tableau contenant les deux dimensions (hauteur, largeur) // on veut getLargeur et getHauteur plutôt
 
 
 
@@ -105,7 +109,7 @@ classe Ligne extends Forme
 
 		public Ligne(int posX, int posY, int finX, int finY, char car) : constructeur d'une ligne
 
-		public int[] getFin(): retourne un tableau des coordonnées de la fin de la ligne
+		public int[] getFin() : retourne un tableau des coordonnées de la fin de la ligne // on veut getFinX et getFinY plutôt
 
 
 classe Cercle extends Forme 
@@ -120,7 +124,7 @@ classe Cercle extends Forme
 
 		public Cercle(int posX, int posY, int rayon, char car) : constructeur d'un cercle
 
-		public int[] getRayon(): retourne le rayon du cercle
+		public int getRayon(): retourne le rayon du cercle // le rayon n'est pas un tableau de int mais juste un int
 
 
 
@@ -130,7 +134,7 @@ classe Lettre extends Forme
 
 	Attributs :
 
-	//On utilise l'attribut «car» déjà défini dans la classe Forme
+	// On utilise l'attribut «car» déjà défini dans la classe Forme
 
 
 	Méthodes :
@@ -142,9 +146,9 @@ classe Texte extends Forme
 =====================================
 
 	Attributs:
-	private String texte: la phrase à écrire
+	private String texte : la phrase à écrire
 
-	private Lettre[] phrase: tableau d'objets Lettre qui composent la phrase
+	private Lettre[] phrase : tableau d'objets Lettre qui composent la phrase
 
 
 	Méthodes :
@@ -152,7 +156,7 @@ classe Texte extends Forme
 	public Texte(int posX, int posY, String texte, char car) : constructeur d'un texte qui appelle aussi
 	 le constructeur d'une lettre pour chaque caractère du texte 
 	
-	 public getLettres(): retourne la collection (tableau) d'objets Lettre
+	 public getLettres(): retourne la collection (tableau) d'objets Lettre // public Lettre[] getPhrase plutôt
 
 
 
