@@ -1,0 +1,158 @@
+Michel Adant (C1176)
+Maryna Starastsenka (20166402)
+
+
+classe Dessin
+=====================================
+
+	Attributs :
+
+		private int largeur : largeur de la surface 
+		
+		private int hauteur : hauteur de la surface
+		
+		private char[][] grille = new char[hauteur][largeur] : 
+		tableau en 2D qui contient les caractères du dessin final
+		
+		private Forme formes[] : tableau qui contient les références 
+		aux instances créées (nos formes)
+		
+		private char carActuel = '#' : caractère de dessin actuel
+
+
+	Méthodes :
+
+		public Dessin(int largeur, int hauteur): Constructeur de la surface de dessin
+		
+		public void dessiner() : modifie la grille en utilisant 
+		les formes, appelle les méthodes "get" des formes instanciées afin de dessiner sur la surface
+		
+		public void brasser() : modifie aléatoirement les positions
+		individuelles de chaque forme
+		
+		public void renverser() : inverse l'ordre des lignes du 
+		tableau grille (symétrie verticale)
+
+		public setCarActuel() : modifie le caractère actuel de dessin
+
+
+		Différentes fonctions "ajouter" qui créent des instances des formes, 
+		elles appellent les constructeurs des formes:
+
+		public void ajouterRectangle(int posX, int posY, int largeur, int hauteur, char carActuel);
+		public void ajouterCarre(int posX, int posY, int cote, char carActuel)
+		public void ajouterLigne(int debutX, int debutY, int finX, int finY, char carActuel)
+		public void ajouterCercle(int posX, int posY, int rayon, char carActuel)
+		public void ajouterLettre(int posX, int posY, char caractere, char carActuel)
+		public void ajouterTexte(int posX, int posY, String texte, char carActuel)
+
+		
+
+
+classe abstract Forme
+=====================================
+
+	Attributs :
+
+		protected int posX : coordonnée X 
+
+		protected int posY : coordonnée Y
+
+		protected char car : caractère utilisé par l'instance
+
+	
+
+	Méthodes: 
+
+		public Forme (int posX, int posY, char car): Constructeur de la classe abstraite Forme
+		
+		public int[] getPos() : retourne les coordonnées X et Y
+
+		public void setPos (int posX, int posY) : modifie la position
+
+		public char getCar(): retourne le caractère à utiliser pour dessiner la forme
+
+
+
+classe Rectangle extends Forme 
+=====================================	
+
+	Attributs :	
+
+		private int largeur 
+		private int hauteur
+
+
+	Méthodes :
+
+		public Rectangle(int posX, int posY, int largeur, int hauteur, char car) : constructeur du rectangle, 
+		servira aussi pour le carré, appelle aussi le super constructeur de la classe abstraite Forme
+
+		public int[] getDimensions(): retourne un tableau contenant les deux dimensions (hauteur, largeur)
+
+
+
+classe Ligne extends Forme 
+=====================================	
+
+	Attributs :	
+
+		private int finX  
+		private int finY
+
+
+	Méthodes :
+
+		public Ligne(int posX, int posY, int finX, int finY, char car) : constructeur d'une ligne
+
+		public int[] getFin(): retourne un tableau des coordonnées de la fin de la ligne
+
+
+classe Cercle extends Forme 
+=====================================	
+
+	Attributs :	
+
+		private int rayon
+
+
+	Méthodes :
+
+		public Cercle(int posX, int posY, int rayon, char car) : constructeur d'un cercle
+
+		public int[] getRayon(): retourne le rayon du cercle
+
+
+
+
+classe Lettre extends Forme 
+=====================================
+
+	Attributs :
+
+	//On utilise l'attribut «car» déjà défini dans la classe Forme
+
+
+	Méthodes :
+
+	public Lettre(int posX, int posY, char car) : constructeur d'une lettre
+
+
+classe Texte extends Forme 
+=====================================
+
+	Attributs:
+	private String texte: la phrase à écrire
+
+	private Lettre[] phrase: tableau d'objets Lettre qui composent la phrase
+
+
+	Méthodes :
+
+	public Texte(int posX, int posY, String texte, char car) : constructeur d'un texte qui appelle aussi
+	 le constructeur d'une lettre pour chaque caractère du texte 
+	
+	 public getLettres(): retourne la collection (tableau) d'objets Lettre
+
+
+
