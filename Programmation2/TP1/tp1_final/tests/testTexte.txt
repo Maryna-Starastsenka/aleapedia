@@ -1,0 +1,4 @@
+init 31 11
+car #
+ajouter texte 0 0 Java
+dessiner

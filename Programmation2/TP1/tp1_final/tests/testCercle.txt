@@ -1,0 +1,6 @@
+init 10 10
+car .
+ajouter rectangle 0 0 10 10
+car #
+ajouter cercle 4 4 3 
+dessiner

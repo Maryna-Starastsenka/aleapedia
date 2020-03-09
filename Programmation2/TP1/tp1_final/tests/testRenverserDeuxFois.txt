@@ -1,0 +1,6 @@
+init 34 11
+car #
+ajouter texte 0 0 Java
+renverser
+renverser
+dessiner

@@ -1,0 +1,16 @@
+init 100 30
+car .
+ajouter rectangle 0 0 200 40
+car #
+ajouter texte -4 -2 JavaTest 
+car %
+ajouter carre -3 18 25
+car ?
+ajouter rectangle 70 -20 30 28
+car *
+ajouter cercle 105 10 10
+car 8
+ajouter ligne -4 -10 120 35
+car @
+ajouter lettre -2 12 @
+dessiner

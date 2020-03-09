@@ -1,0 +1,6 @@
+init 8 11
+car .
+ajouter rectangle 0 0 8 11
+car #
+ajouter lettre 0 0 щ
+dessiner
