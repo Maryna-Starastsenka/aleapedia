@@ -1,4 +1,3 @@
-
 /**
  * Données graphiques pour une police monospace des 256 premiers
  * caractères Unicode.

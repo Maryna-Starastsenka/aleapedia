@@ -1,10 +1,8 @@
-
 import java.util.ArrayList;
 
 public class Cercle extends Forme {
 
     private int rayon;
-
 
     //Constructeur d'un cercle
     public Cercle(int posX, int posY, int rayon, char car) {
@@ -12,9 +10,9 @@ public class Cercle extends Forme {
         this.rayon = rayon;
     }
 
-
     @Override
     public ArrayList<Point> getPoints() {
+
         ArrayList<Point> points = new ArrayList<Point>();
 
         int m = 5 - 4 * this.rayon;
@@ -44,7 +42,6 @@ public class Cercle extends Forme {
     public void renverserForme(int hauteurGrille) {
         this.posY = hauteurGrille-this.posY-1;
     }
-
 }
 
 

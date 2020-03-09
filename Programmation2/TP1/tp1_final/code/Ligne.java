@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 
 public class Ligne extends Forme {
@@ -7,14 +5,12 @@ public class Ligne extends Forme {
     private int finX;
     private int finY;
 
-
     //Constructeur d'une ligne
     public Ligne(int posX, int posY, int finX, int finY, char car) {
         super(posX, posY, car);
         this.finX = finX;
         this.finY = finY;
     }
-
 
     @Override
     public ArrayList<Point> getPoints() {
@@ -57,14 +53,11 @@ public class Ligne extends Forme {
         return points;
     }
 
-
     @Override
     public void renverserForme(int hauteurGrille){
         this.posY = hauteurGrille-this.posY-1;
         this.finY = hauteurGrille-this.finY-1;
-    };
-
-
+    }
 
     @Override
     public void brasser() {

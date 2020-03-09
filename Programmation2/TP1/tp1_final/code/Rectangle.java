@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 public class Rectangle extends Forme {
@@ -14,18 +13,18 @@ public class Rectangle extends Forme {
 		this.hauteur = hauteur;
 	}
 
-
 	@Override
 	public ArrayList<Point> getPoints() {
+
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (int y = this.posY; y < this.posY + this.hauteur; y++) {
 			for (int x = this.posX; x < this.posX + this.largeur; x++) {
 				points.add(new Point(x, y));
 			}
 		}
+
 		return points;
 	}
-
 
 	@Override
 	public void renverserForme(int hauteurGrille) {

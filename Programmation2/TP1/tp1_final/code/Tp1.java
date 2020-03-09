@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.Scanner;
 public class Tp1 {
 
     public static void main(String[] args) {
@@ -57,14 +57,14 @@ public class Tp1 {
                             hauteur = Integer.parseInt(motsInstruction[5]);
                             Forme nouveauRect = new Rectangle(posX, posY, 
                                 largeur, hauteur, nouveauDessin.getCarActuel());
-                            nouveauDessin.formes.add(nouveauRect);
+                            nouveauDessin.ajouterForme(nouveauRect);
                             break;
 
                         case "carre":
                             cote = Integer.parseInt(motsInstruction[4]);
                             Rectangle nouveauCarre = new Rectangle(posX, posY,
                              cote, cote, nouveauDessin.getCarActuel());
-                            nouveauDessin.formes.add(nouveauCarre);
+                            nouveauDessin.ajouterForme(nouveauCarre);
                             break;
 
                         case "ligne":
@@ -72,27 +72,27 @@ public class Tp1 {
                             finY = Integer.parseInt(motsInstruction[5]);
                             Ligne nouvelleLigne = new Ligne(posX, posY, finX,
                              finY, nouveauDessin.getCarActuel());
-                            nouveauDessin.formes.add(nouvelleLigne);
+                            nouveauDessin.ajouterForme(nouvelleLigne);
                             break;
 
                         case "cercle":
                             rayon = Integer.parseInt(motsInstruction[4]);
                             Cercle nouveauCercle = new Cercle(posX, posY,
                              rayon, nouveauDessin.getCarActuel());
-                            nouveauDessin.formes.add(nouveauCercle);
+                            nouveauDessin.ajouterForme(nouveauCercle);
                             break;
 
                         case "lettre":
                             lettre = motsInstruction[4].charAt(0);
                             Lettre nouvelleLettre = new Lettre(posX, posY,
                              lettre, nouveauDessin.getCarActuel());
-                            nouveauDessin.formes.add(nouvelleLettre);
+                            nouveauDessin.ajouterForme(nouvelleLettre);
                             break;
 
                         case "texte":
                             Texte nouveauTexte = new Texte(posX, posY,
                              motsInstruction[4], nouveauDessin.getCarActuel());
-                            nouveauDessin.formes.add(nouveauTexte);
+                            nouveauDessin.ajouterForme(nouveauTexte);
                             break;
 
                         //Deuxième mot invalide

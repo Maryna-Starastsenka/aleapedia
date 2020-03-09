@@ -4,18 +4,17 @@ import java.util.Random;
 
 public abstract class Forme {
 
+	//Génère des nombres aléatoires
+	protected static Random rand = new Random();
+
 	//Coordonnée X
-	protected int posX; 
+	protected int posX;
 
 	//Coordonnée Y
 	protected int posY;
 
 	//Caractère utilisé par l'instance
 	protected char car;
-
-	//Génère des nombres aléatoires
-	protected static Random rand = new Random();
-
 
 	//Constructeur de la classe abstraite
 	public Forme (int posX, int posY, char car){
@@ -24,40 +23,33 @@ public abstract class Forme {
 		this.car = car;
 	}
 
-
 	public int getPosX(){
 		return this.posX;
 	}
-
-
-	public int getPosY(){
-		return this.posY;
-	}
-
-	//Sert à contenir les points calculés
-	public abstract ArrayList<Point> getPoints();
-
 
 	//modifie la position X
 	public void setPosX (int posX){
 		this.posX = posX;
 	}
 
+	public int getPosY(){
+		return this.posY;
+	}
 
 	//modifie la position Y
 	public void setPosY (int posY){
 		this.posY = posY;
 	}
 
+	//Sert à obtenir les points calculés
+	public abstract ArrayList<Point> getPoints();
 
 	//retourne le caractère à utiliser pour dessiner la forme
 	public char getCar(){
 		return this.car;
 	}
 
-
 	public abstract void renverserForme(int hauteurGrille);
-
 
 	public void brasser() {
 
@@ -69,6 +61,5 @@ public abstract class Forme {
 		this.posY = this.posY + aleatoireY;
 
 	}
-
 }
 
