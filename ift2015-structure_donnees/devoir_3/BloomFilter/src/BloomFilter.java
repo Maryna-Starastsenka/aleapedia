@@ -2,6 +2,9 @@
  * @author Prénom Nom (Matricule)
  */
 public class BloomFilter {
+
+    BitSet bitSet;
+
     /**
      * Crée un filtre de Bloom basé sur la taille de l'ensemble de bits et du
      * nombre de fonctions de hachage.
@@ -11,6 +14,7 @@ public class BloomFilter {
      */
     public BloomFilter(int numBits, int numHashes) {
         // TODO À compléter
+        bitSet = new BitSet(numBits);
     }
 
     /**
