@@ -31,6 +31,8 @@ public class CorrecteurOrthographique {
     }
 
     // Parcourir le fichier dictionnaire et construire les structures de données
+
+
     public void construireStructuresDonnees() {
         this.ensembleMotsConnu = new HashSet<>();
         this.listeAssociativeMotsTronques = new HashMap<>();

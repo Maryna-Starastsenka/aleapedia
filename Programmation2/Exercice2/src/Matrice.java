@@ -1,3 +1,5 @@
+// Nom : Maryna Starastsenka, Matricule : 20166402
+
 public class Matrice {
     private double[][] matrice;
     private int nlignes, mcolonnes;
@@ -100,13 +102,13 @@ public class Matrice {
 //    Retourne une version transposée de la matrice
 //    (sans modifier la matrice actuelle)
     public Matrice transpose() {
-        Matrice newMatrice = new Matrice(mcolonnes, nlignes);
+        Matrice matriceTransposee = new Matrice(mcolonnes, nlignes);
         for (int i = 0; i < nlignes; i++) {
             for (int j = 0; j < mcolonnes; j++) {
-                newMatrice.setCell(j, i, matrice[i][j]);
+                matriceTransposee.setCell(j, i, matrice[i][j]);
             }
         }
-        return newMatrice;
+        return matriceTransposee;
     }
 
 //    Retourne une instance de la matrice identité N x N

@@ -1,10 +1,15 @@
+// Nom : Maryna Starastsenka, Matricule : 20166402
+
 public class Vecteur {
     private double[] elements;
 
     //    Constructeur avec en paramètre un tableau d'éléments de type
     //    `double`
     public Vecteur(double[] elements) {
-        this.elements = elements.clone();
+        this.elements = new double[elements.length];
+        for (int i = 0; i < elements.length; i++) {
+            this.elements[i] = elements[i];
+        }
     }
 
     //    Permet de changer la valeur à l'index donné (commence à 0,

@@ -1,0 +1,16 @@
+>>var fs = require("
+>>>
+var readFile = function (path) {
+    return fs.readFileSync(path).toString();
+};
+
+var writeFile = function (path, texte) {
+    fs.writeFileSync(path, texte);
+};
+
+var print = function (x) {
+    console.log(x);
+};
+
+var fichier = readFile("qbfjold.txt");
+print(fichier)

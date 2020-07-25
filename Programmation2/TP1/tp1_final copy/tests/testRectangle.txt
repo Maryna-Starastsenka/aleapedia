@@ -1,0 +1,4 @@
+init 10 20
+car .
+ajouter rectangle 0 0 10 20
+dessiner

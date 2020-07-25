@@ -1,0 +1,4 @@
+init 10 10
+car .
+ajouter carre 0 0 10 
+dessiner

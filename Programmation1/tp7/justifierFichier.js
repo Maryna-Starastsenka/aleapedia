@@ -216,8 +216,3 @@ var test = function () {
 };
 
 test();
-justifierFichier("qbfjold.txt", "out.txt", 15);
-justifierFichier("ipsum.txt", "out2.txt", 15);
-/*print(justifierTexte('mamie-vol-au-vent', 10));
-print(justifierTexte('vol-au-vent', 6));
-print(justifierTexte('Être au rez-de-chaussée', 12));*/
