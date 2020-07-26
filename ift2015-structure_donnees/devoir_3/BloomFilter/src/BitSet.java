@@ -76,4 +76,8 @@ public class BitSet {
         byte oneMask = (byte) (1 << (bitIndex % EIGHT));
         return oneMask;
     }
+
+    public int getNbits() {
+        return nbits;
+    }
 }
