@@ -1,15 +1,19 @@
+/**
+ * Adaptation par Maryna Starastsenka (20166402) (l'auteure du devoir)
+ * de la fonction de hachage non-cryptographique Murmur3 initialement implémentée
+ * par Viliam Holub (code du domaine public) :
+ * https://d3s.mff.cuni.cz/legacy/~holub/sw/javamurmurhash/MurmurHash.java
+ */
 public class Murmur3 {
     /**
-     * Génère un hachage Murmur3 de 64 bits à partir d'un tableau de bytes
-     * Code du domaine public adapté du site https://d3s.mff.cuni.cz/legacy/~holub/sw/javamurmurhash/MurmurHash.java
-     * (auteur original Viliam Holub)
+     * Génère un hachage Murmur3 de 64 bits à partir d'un tableau d'octets
      *
-     * @param data tableau de bytes à hacher
-     * @return hachage 64 bits du tableau de bytes
+     * @param data tableau d'octets à hacher.
+     * @return hachage 64 bits du tableau d'octets.
      */
     public static long murmur3Hash64(final byte[] data) {
         int length = data.length;
-        // initial seed value
+        // valeur de seed initiale
         int seed = 0xe17a1465;
 
         final long m = 0xc6a4a7935bd1e995L;
@@ -48,10 +52,9 @@ public class Murmur3 {
             case 2:
                 h ^= (long) (data[(length & ~7) + 1] & 0xff) << 8;
             case 1:
-                h ^= (long) (data[length & ~7] & 0xff);
+                h ^= data[length & ~7] & 0xff;
                 h *= m;
         }
-        ;
 
         h ^= h >>> r;
         h *= m;
