@@ -124,7 +124,4 @@ public class BloomFilter {
         if (hash < 0) hash = hash + Long.MAX_VALUE + 1;
         return (int) (hash % size);
     }
-
-
 }
-

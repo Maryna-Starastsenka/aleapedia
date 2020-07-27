@@ -15,7 +15,7 @@ public class Main {
         DecimalFormat df = new DecimalFormat("##.####");
 
 //        var bf = new BloomFilter(8, 2);
-        int limit = 18;
+        int limit = 9;
         // Bloom Filter en settant la pro
         var bf = new BloomFilter(limit, 0.5);
         //        var a = BloomFilter.hash("Hello".getBytes(), 1);
