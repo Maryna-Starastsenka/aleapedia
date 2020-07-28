@@ -1,0 +1,12 @@
+void Imprimer(int v, Table T, bool estNœudCible)
+	
+	SI T[v].p ≠ 0 
+	    Imprimer(T[v].p, T, false)
+
+	    SI estNœudCible
+	    	Écrire(v)
+	    SINON
+	    	Écrire(v + " à ")
+	SINON 
+	    Écrire(v + " à ");
+	
