@@ -14,10 +14,11 @@ public class Main {
     private static void testBloomFilter() {
         DecimalFormat df = new DecimalFormat("##.####");
 
-//        var bf = new BloomFilter(8, 2);
+        var bf = new BloomFilter(8, 2);
+        bf.reset();
         int limit = 9;
         // Bloom Filter en settant la pro
-        var bf = new BloomFilter(limit, 0.1);
+        bf = new BloomFilter(limit, 0.1);
 //        var a = BloomFilter.hash("Hello".getBytes(), 1);
         var chaines = new String[] {
                 "hello",

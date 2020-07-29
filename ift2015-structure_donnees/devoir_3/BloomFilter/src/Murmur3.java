@@ -1,5 +1,7 @@
 /**
- * Adaptation par Maryna Starastsenka (20166402) (l'auteure du devoir)
+ * @author Maryna Starastsenka (20166402)
+ *
+ * Adaptation par Maryna Starastsenka (l'auteure du devoir)
  * de la fonction de hachage non-cryptographique Murmur3 initialement implémentée
  * par Viliam Holub (code du domaine public) :
  * https://d3s.mff.cuni.cz/legacy/~holub/sw/javamurmurhash/MurmurHash.java

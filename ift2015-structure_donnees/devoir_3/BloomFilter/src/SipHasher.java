@@ -1,5 +1,7 @@
 /**
- * Adaptation, refactorisation et simplification par Maryna Starastsenka (20166402) (l'auteure du devoir)
+ * @author Maryna Starastsenka (20166402)
+ *
+ * Adaptation, refactorisation et simplification par Maryna Starastsenka (l'auteure du devoir)
  * de la fonction de hachage cryptographique SipHasher initialement implémentée
  * par Isaac Whitfield (license MIT) en 2016 :
  * https://github.com/whitfin/siphash-java/tree/master/src/main/java/io/whitfin/siphash

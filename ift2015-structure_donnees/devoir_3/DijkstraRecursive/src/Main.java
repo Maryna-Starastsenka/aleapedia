@@ -38,10 +38,10 @@ public class Main {
     public static void imprimer(int v, int[][] T, boolean last) {
         if (T[v][1] != 0) {
             imprimer(T[v][1], T, false);
-            if (last) System.out.print(v);
-            else System.out.print(v + " à ");
+            if (last) System.out.print("v" + v);
+            else System.out.print("v" + v + " à ");
         } else {
-            System.out.print(v + " à ");
+            System.out.print("v" + v + " à ");
         }
     }
 }

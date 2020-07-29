@@ -4,9 +4,9 @@ void Imprimer(int v, Table T, bool estNœudCible)
 	    Imprimer(T[v].p, T, false)
 
 	    SI estNœudCible
-	    	Écrire(v)
+	    	Écrire("v" + v)
 	    SINON
-	    	Écrire(v + " à ")
+	    	Écrire("v" + v + " à ")
 	SINON 
-	    Écrire(v + " à ");
+	    Écrire("v" + v + " à ")
 	
