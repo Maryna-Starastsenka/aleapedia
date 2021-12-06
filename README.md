@@ -2,7 +2,7 @@
 
 <img src="aleapedia.png" width="300" />
 
-Aleapedia is a fake Wikipedia page generator. It uses a custom-built Markov Model to achieve this goal.
+Aleapedia is a fake web encyclopedia generator where articles are pseudo-randomly created using a custom Markov Chain Model.
 
 
 This project was part of the IFT2015 course I took at Université de Montréal in 2019.
