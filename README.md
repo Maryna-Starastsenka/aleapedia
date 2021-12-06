@@ -1,5 +1,7 @@
 # Aleapedia
 
+<img src="aleapedia.png" width="300" />
+
 Aleapedia is a fake Wikipedia page generator. It uses a custom-built Markov Model to achieve this goal.
 
 
